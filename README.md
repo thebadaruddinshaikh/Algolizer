@@ -1,8 +1,7 @@
 # algolizer
 
 This README outlines the details of collaborating on this Ember application.
-A short introduction of this app could easily go here.
-
+This is an ongoing visualisaiton Project built on Ember.js, it is inspired from Youtuber Clement's Visulizer App.
 ## Prerequisites
 
 You will need the following things properly installed on your computer.
