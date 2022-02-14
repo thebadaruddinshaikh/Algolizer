@@ -1,0 +1,106 @@
+.center-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.center-row-container {
+  display: flex;
+  justify-content: center;
+}
+
+.link-to-button {
+  margin: 10px;
+  padding: 10px 20px;
+  width: 110px;
+  text-align: center;
+  color: white;
+  text-decoration: none;
+  background-color: #101010;
+  transition: 0.5s;
+  border-radius: 25px;
+}
+
+.link-to-button:hover {
+  background-color: #383838;
+  font-weight: 600;
+  width: 120px;
+}
+
+.box {
+  height: 30px;
+  width: 30px;
+  border: 1px solid gainsboro;
+  background-color: white;
+}
+
+.box:hover {
+  cursor: pointer;
+}
+
+.visited {
+  animation: touched 0.6s ease-out forwards;
+  animation-iteration-count: 1;
+  transform-origin: center;
+}
+
+.wall {
+  background-color: #545454;
+  animation: wallBounce 0.4s ease-out forwards;
+}
+
+@keyframes wallBounce {
+  50% {
+    transform: scale(1.2);
+    transform-origin: center;
+    border-color: #595959;
+  }
+  100% {
+    border-color: #595959;
+  }
+}
+@keyframes touched {
+  0% {
+    transform: scale(0.3);
+    background-color: yellow;
+    border-color: yellow;
+    border-radius: 100%;
+  }
+  50% {
+    transform: scale(1.1);
+    border-radius: 0px;
+    background-color: #0077ff;
+    border-color: #0077ff;
+  }
+  100% {
+    background-color: cyan;
+    border-color: cyan;
+  }
+}
+nav {
+  background-color: #3b3b3b;
+  height: 60px;
+  display: flex;
+  justify-content: space-around;
+  color: white;
+  margin: 0px;
+  padding: 10px 30px;
+}
+
+.nav-bar-options {
+  display: flex;
+  justify-content: space-evenly;
+  flex-grow: 2;
+}
+
+.navbar-title {
+  margin: 0px;
+  padding: 10px 0px;
+}
+
+.grid-container {
+  margin-top: 30px;
+}
+
+/*# sourceMappingURL=algolizer.css.map */

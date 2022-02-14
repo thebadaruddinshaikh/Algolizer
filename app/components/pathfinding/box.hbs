@@ -1,0 +1,11 @@
+<div
+  class='box {{this.getClasses}}'
+  {{on 'click' this.touch}}
+  {{on 'mouseenter' this.onDrag}}
+>
+  {{#if this.isSource}}
+    S
+  {{else if this.isDestination}}
+    D
+  {{/if}}
+</div>

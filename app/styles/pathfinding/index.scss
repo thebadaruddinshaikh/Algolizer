@@ -1,0 +1,22 @@
+nav {
+  background-color: rgb(59, 59, 59);
+  height: 60px;
+  display: flex;
+  justify-content: space-around;
+  color: white;
+  margin: 0px;
+  padding: 10px 30px;
+}
+.nav-bar-options {
+  display: flex;
+  justify-content: space-evenly;
+  flex-grow: 2;
+}
+.navbar-title {
+  margin: 0px;
+  padding: 10px 0px;
+}
+
+.grid-container {
+  margin-top: 30px;
+}

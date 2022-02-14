@@ -1,0 +1,231 @@
+{{page-title 'Algolizer | Pathfinding'}}
+
+<nav>
+  <h1 class='navbar-title'>
+    Path Finding
+  </h1>
+  <div class='nav-bar-options'>
+    <p>Algorithms</p>
+    <p {{on 'click' this.find}}>Visualize!</p>
+  </div>
+</nav>
+
+<div class='center-container' {{drag-manager this.dragState}}>
+  {{!-- {{#each this.grid as |row Y|}}
+    <div class='center-row-container'>
+      {{#each row as |box X|}}
+        <Pathfinding::Box
+          @isWall={{get box 'isWall'}}
+          @isVisited={{get box 'isVisited'}}
+          @arrPos={{array Y X}}
+          @onChange={{this.onChangeHandler}}
+        />
+      {{/each}}
+    </div>
+  {{/each}} --}}
+  <div class='center-row-container grid-container'>
+    {{#each (get this.grid 0) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 0}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 1) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 1}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 2) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 2}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 3) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 3}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 4) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 4}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 5) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 5}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 6) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 6}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 7) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 7}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 8) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 8}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 9) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 9}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 10) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 10}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 11) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 11}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 12) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 12}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 13) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 13}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 14) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 14}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 15) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 15}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 16) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 16}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 17) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 17}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 18) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 18}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+  <div class='center-row-container'>
+    {{#each (get this.grid 19) as |box index|}}
+      <Pathfinding::Box
+        @isWall={{get box 'isWall'}}
+        @isVisited={{get box 'isVisited'}}
+        @arrPos={{array index 19}}
+        @onChange={{this.onChangeHandler}}
+      />
+    {{/each}}
+  </div>
+
+  <button type='button' {{on 'click' this.randomVisit}}>
+    Visit Random
+  </button>
+
+</div>
