@@ -114,22 +114,6 @@
       _defineProperty(this, "isDestination", this.dragState.isDestination(this.position));
     }
 
-    get getClasses() {
-      if (this.isWall) {
-        return 'wall';
-      } else if (this.isVisited) {
-        return 'visited';
-      }
-    }
-
-    interactHandler() {
-      if (!this.isSource && !this.isDestination) {
-        this.isWall = !this.isWall;
-        this.isVisited = false;
-        this.onChange(this.position, this.isWall, false);
-      }
-    }
-
     touch() {
       this.interactHandler();
     }
@@ -137,6 +121,26 @@
     onDrag() {
       if (this.dragState.dragging) {
         this.interactHandler();
+      }
+    }
+
+    interactHandler() {
+      if (!this.isSource && !this.isDestination && !this.inProgress) {
+        this.isWall = !this.isWall;
+        this.isVisited = false;
+        this.onChange(this.position, this.isWall, false);
+      }
+    }
+
+    get inProgress() {
+      return this.dragState.underProgramControl;
+    }
+
+    get getClasses() {
+      if (this.isWall) {
+        return 'wall';
+      } else if (this.isVisited) {
+        return 'visited';
       }
     }
 
@@ -243,10 +247,32 @@
       this.updateWithoutRebuild(pos[0], pos[1], wall, visited);
     }
 
-    find() {
-      let stack = [];
-      stack.push(this.dragState.source);
-      this.depthFirstSearch(stack);
+    async visualize() {
+      this.dragState.underProgramControl = true; //call for DFS
+      // let stack = [];
+      // stack.push(this.dragState.source);
+      // this.depthFirstSearch(stack);
+      //call for BFS
+
+      let queue = [];
+      queue.push(this.dragState.source);
+      await this.breadthFirstSearch(queue);
+      this.dragState.underProgramControl = false;
+    }
+
+    clearPath() {
+      for (let y = 0; y < this.grid.length; y++) {
+        for (let x = 0; x < this.grid[0].length; x++) {
+          if (this.grid[y][x].isVisited) {
+            this.grid[y][x] = {
+              isWall: false,
+              isVisited: false
+            };
+          }
+        }
+      }
+
+      this.grid = [...this.grid];
     }
 
     async depthFirstSearch(stack) {
@@ -256,7 +282,7 @@
       while (stack.length) {
         let box = stack.pop();
 
-        if (this.grid[box[1]][box[0]].isWall || this.grid[box[1]][box[0]].isVisited) {
+        if (this.grid[box[1]][box[0]].isVisited) {
           continue;
         }
 
@@ -273,9 +299,7 @@
           if (x < 0 || y < 0 || x > 39 || y > 19) {
             continue;
           } //check if wall
-
-
-          if (this.grid[y][x].isWall || this.grid[y][x].isVisited) {
+          else if (this.grid[y][x].isWall) {
             continue;
           } //else put in queue
           else {
@@ -287,7 +311,41 @@
       }
     }
 
-    async breadthFirstSearch() {}
+    async breadthFirstSearch(queue) {
+      let dy = [-1, 0, 1, 0];
+      let dx = [0, 1, 0, -1];
+
+      while (queue.length) {
+        let box = queue.shift();
+
+        if (this.grid[box[1]][box[0]].isVisited) {
+          continue;
+        }
+
+        this.updateWithRebuild(box[0], box[1], false, true);
+
+        if (this.dragState.isDestination(box)) {
+          break;
+        }
+
+        for (let i = 0; i < 4; i++) {
+          let x = box[0] + dx[i];
+          let y = box[1] + dy[i]; //check if off the grid
+
+          if (x < 0 || y < 0 || x > 39 || y > 19) {
+            continue;
+          } //check if wall
+          else if (this.grid[y][x].isWall) {
+            continue;
+          } //else put in queue
+          else {
+            queue.push([x, y]);
+          }
+        }
+
+        await new Promise(r => setTimeout(r, 100));
+      }
+    }
 
   }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "dragState", [_dec], {
     configurable: true,
@@ -301,7 +359,7 @@
     initializer: function () {
       return this.model;
     }
-  }), _applyDecoratedDescriptor(_class.prototype, "onChangeHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onChangeHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "find", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "find"), _class.prototype)), _class));
+  }), _applyDecoratedDescriptor(_class.prototype, "onChangeHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onChangeHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "visualize", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "visualize"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearPath", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clearPath"), _class.prototype)), _class));
   _exports.default = PathfindingIndexController;
 });
 ;define("algolizer/data-adapter", ["exports", "@ember-data/debug"], function (_exports, _debug) {
@@ -686,7 +744,7 @@
   });
   _exports.default = void 0;
 
-  var _class, _descriptor;
+  var _class, _descriptor, _descriptor2;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -701,6 +759,8 @@
       super(...arguments);
 
       _initializerDefineProperty(this, "dragging", _descriptor, this);
+
+      _initializerDefineProperty(this, "underProgramControl", _descriptor2, this);
 
       _defineProperty(this, "source", [9, 9]);
 
@@ -732,6 +792,13 @@
     }
 
   }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "dragging", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return false;
+    }
+  }), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "underProgramControl", [_tracking.tracked], {
     configurable: true,
     enumerable: true,
     writable: true,
@@ -823,8 +890,8 @@
   _exports.default = void 0;
 
   var _default = (0, _templateFactory.createTemplateFactory)({
-    "id": "VtcIwObR",
-    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[10,\"nav\"],[12],[1,\"\\n  \"],[10,\"h1\"],[14,0,\"navbar-title\"],[12],[1,\"\\n    Path Finding\\n  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"nav-bar-options\"],[12],[1,\"\\n    \"],[10,2],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[11,2],[4,[38,1],[\"click\",[30,0,[\"find\"]]],null],[12],[1,\"Visualize!\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container\"],[4,[38,2],[[30,0,[\"dragState\"]]],null],[12],[1,\"\\n\"],[1,\"  \"],[10,0],[14,0,\"center-row-container grid-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"on\",\"drag-manager\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
+    "id": "9T6hZlAu",
+    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[10,\"nav\"],[12],[1,\"\\n  \"],[10,\"h1\"],[14,0,\"navbar-title\"],[12],[1,\"\\n    Path Finding\\n  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"nav-bar-options\"],[12],[1,\"\\n    \"],[10,2],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[11,2],[4,[38,1],[\"click\",[30,0,[\"visualize\"]]],null],[12],[1,\"Visualize!\"],[13],[1,\"\\n    \"],[11,2],[4,[38,1],[\"click\",[30,0,[\"clearPath\"]]],null],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container\"],[4,[38,2],[[30,0,[\"dragState\"]]],null],[12],[1,\"\\n\"],[1,\"  \"],[10,0],[14,0,\"center-row-container grid-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"on\",\"drag-manager\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
     "moduleName": "algolizer/templates/pathfinding/index.hbs",
     "isStrictMode": false
   });

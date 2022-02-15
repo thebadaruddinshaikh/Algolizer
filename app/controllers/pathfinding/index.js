@@ -27,10 +27,35 @@ export default class PathfindingIndexController extends Controller {
   }
 
   @action
-  find() {
-    let stack = [];
-    stack.push(this.dragState.source);
-    this.depthFirstSearch(stack);
+  async visualize() {
+    this.dragState.underProgramControl = true;
+
+    //call for DFS
+    // let stack = [];
+    // stack.push(this.dragState.source);
+    // this.depthFirstSearch(stack);
+
+    //call for BFS
+    let queue = [];
+    queue.push(this.dragState.source);
+    await this.breadthFirstSearch(queue);
+
+    this.dragState.underProgramControl = false;
+  }
+
+  @action
+  clearPath() {
+    for (let y = 0; y < this.grid.length; y++) {
+      for (let x = 0; x < this.grid[0].length; x++) {
+        if (this.grid[y][x].isVisited) {
+          this.grid[y][x] = {
+            isWall: false,
+            isVisited: false,
+          };
+        }
+      }
+    }
+    this.grid = [...this.grid];
   }
 
   async depthFirstSearch(stack) {
@@ -40,10 +65,7 @@ export default class PathfindingIndexController extends Controller {
     while (stack.length) {
       let box = stack.pop();
 
-      if (
-        this.grid[box[1]][box[0]].isWall ||
-        this.grid[box[1]][box[0]].isVisited
-      ) {
+      if (this.grid[box[1]][box[0]].isVisited) {
         continue;
       }
       this.updateWithRebuild(box[0], box[1], false, true);
@@ -61,7 +83,7 @@ export default class PathfindingIndexController extends Controller {
           continue;
         }
         //check if wall
-        if (this.grid[y][x].isWall || this.grid[y][x].isVisited) {
+        else if (this.grid[y][x].isWall) {
           continue;
         }
         //else put in queue
@@ -72,5 +94,41 @@ export default class PathfindingIndexController extends Controller {
       await new Promise((r) => setTimeout(r, 100));
     }
   }
-  async breadthFirstSearch() {}
+  async breadthFirstSearch(queue) {
+    let dy = [-1, 0, 1, 0];
+    let dx = [0, 1, 0, -1];
+
+    while (queue.length) {
+      let box = queue.shift();
+
+      if (this.grid[box[1]][box[0]].isVisited) {
+        continue;
+      }
+
+      this.updateWithRebuild(box[0], box[1], false, true);
+
+      if (this.dragState.isDestination(box)) {
+        break;
+      }
+
+      for (let i = 0; i < 4; i++) {
+        let x = box[0] + dx[i];
+        let y = box[1] + dy[i];
+
+        //check if off the grid
+        if (x < 0 || y < 0 || x > 39 || y > 19) {
+          continue;
+        }
+        //check if wall
+        else if (this.grid[y][x].isWall) {
+          continue;
+        }
+        //else put in queue
+        else {
+          queue.push([x, y]);
+        }
+      }
+      await new Promise((r) => setTimeout(r, 100));
+    }
+  }
 }

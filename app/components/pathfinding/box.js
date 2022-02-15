@@ -14,22 +14,6 @@ export default class PathfindingBoxComponent extends Component {
   isSource = this.dragState.isSource(this.position);
   isDestination = this.dragState.isDestination(this.position);
 
-  get getClasses() {
-    if (this.isWall) {
-      return 'wall';
-    } else if (this.isVisited) {
-      return 'visited';
-    }
-  }
-
-  interactHandler() {
-    if (!this.isSource && !this.isDestination) {
-      this.isWall = !this.isWall;
-      this.isVisited = false;
-      this.onChange(this.position, this.isWall, false);
-    }
-  }
-
   @action
   touch() {
     this.interactHandler();
@@ -39,6 +23,26 @@ export default class PathfindingBoxComponent extends Component {
   onDrag() {
     if (this.dragState.dragging) {
       this.interactHandler();
+    }
+  }
+
+  interactHandler() {
+    if (!this.isSource && !this.isDestination && !this.inProgress) {
+      this.isWall = !this.isWall;
+      this.isVisited = false;
+      this.onChange(this.position, this.isWall, false);
+    }
+  }
+
+  get inProgress() {
+    return this.dragState.underProgramControl;
+  }
+
+  get getClasses() {
+    if (this.isWall) {
+      return 'wall';
+    } else if (this.isVisited) {
+      return 'visited';
     }
   }
 }
