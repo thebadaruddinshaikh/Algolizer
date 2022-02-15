@@ -40,6 +40,12 @@ export default class PathfindingIndexController extends Controller {
     while (stack.length) {
       let box = stack.pop();
 
+      if (
+        this.grid[box[1]][box[0]].isWall ||
+        this.grid[box[1]][box[0]].isVisited
+      ) {
+        continue;
+      }
       this.updateWithRebuild(box[0], box[1], false, true);
 
       if (this.dragState.isDestination(box)) {
@@ -66,4 +72,5 @@ export default class PathfindingIndexController extends Controller {
       await new Promise((r) => setTimeout(r, 100));
     }
   }
+  async breadthFirstSearch() {}
 }
