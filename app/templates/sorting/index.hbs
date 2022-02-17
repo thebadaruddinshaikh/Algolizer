@@ -1,2 +1,16 @@
-{{page-title 'Algolizer | Sorting'}}
 <h1>Sorting</h1>
+<input
+  type='range'
+  min='10'
+  max='100'
+  value='{{this.sliderValue}}'
+  {{on 'input' this.onSlide}}
+/>
+<div class='bar-container'>
+  {{#each this.barList as |bar|}}
+    <Sorting::Bar @height={{get bar 'height'}} @width={{get bar 'width'}} />
+  {{/each}}
+</div>
+<button type='button' {{on 'click' this.generateList}}>
+  Generate List
+</button>

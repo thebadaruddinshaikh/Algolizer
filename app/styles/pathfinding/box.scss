@@ -21,7 +21,6 @@
   50% {
     transform: scale(1.2);
     transform-origin: center;
-    border-color: rgb(89, 89, 89);
   }
   100% {
     border-color: rgb(89, 89, 89);
@@ -42,6 +41,6 @@
   }
   100% {
     background-color: cyan;
-    border-color: cyan;
+    border-color: rgb(10, 207, 207);
   }
 }

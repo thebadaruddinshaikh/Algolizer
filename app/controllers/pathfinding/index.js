@@ -4,7 +4,7 @@ import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 
 export default class PathfindingIndexController extends Controller {
-  @service('drag-state') dragState;
+  @service('path-finding-state-manager') dragState;
 
   @tracked grid = this.model;
 
@@ -31,16 +31,31 @@ export default class PathfindingIndexController extends Controller {
     this.dragState.underProgramControl = true;
 
     //call for DFS
-    // let stack = [];
-    // stack.push(this.dragState.source);
-    // this.depthFirstSearch(stack);
+    let stack = [];
+    stack.push(this.dragState.source);
+    await this.depthFirstSearch(stack);
 
     //call for BFS
-    let queue = [];
-    queue.push(this.dragState.source);
-    await this.breadthFirstSearch(queue);
+    // let queue = [];
+    // queue.push(this.dragState.source);
+    // await this.breadthFirstSearch(queue);
 
     this.dragState.underProgramControl = false;
+  }
+
+  @action
+  clearBoard() {
+    for (let y = 0; y < this.grid.length; y++) {
+      for (let x = 0; x < this.grid[0].length; x++) {
+        if (this.grid[y][x].isWall) {
+          this.grid[y][x] = {
+            isWall: false,
+            isVisited: false,
+          };
+        }
+      }
+    }
+    this.clearPath();
   }
 
   @action
@@ -128,7 +143,7 @@ export default class PathfindingIndexController extends Controller {
           queue.push([x, y]);
         }
       }
-      await new Promise((r) => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 5));
     }
   }
 }

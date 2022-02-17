@@ -3,6 +3,10 @@ import Route from '@ember/routing/route';
 export default class PathfindingIndexRoute extends Route {
   grid = [];
 
+  beforeModel() {
+    this.grid = [];
+    this.grid = [...this.grid];
+  }
   model() {
     for (let y = 0; y < 20; y++) {
       let tempArr = [];

@@ -135,6 +135,27 @@ define("algolizer/tests/integration/modifiers/drag-manager-test", ["@ember/templ
     });
   });
 });
+define("algolizer/tests/integration/modifiers/set-dimensions", ["@ember/template-factory", "qunit", "ember-qunit", "@ember/test-helpers"], function (_templateFactory, _qunit, _emberQunit, _testHelpers) {
+  "use strict";
+
+  (0, _qunit.module)('Integration | Modifier | set-height', function (hooks) {
+    (0, _emberQunit.setupRenderingTest)(hooks); // Replace this with your real tests.
+
+    (0, _qunit.test)('it renders', async function (assert) {
+      await (0, _testHelpers.render)((0, _templateFactory.createTemplateFactory)(
+      /*
+        <div {{set-height}}></div>
+      */
+      {
+        "id": "CllNKSTG",
+        "block": "[[[11,0],[4,[38,0],null,null],[12],[13]],[],false,[\"set-height\"]]",
+        "moduleName": "(unknown template module)",
+        "isStrictMode": false
+      }));
+      assert.ok(true);
+    });
+  });
+});
 define("algolizer/tests/test-helper", ["algolizer/app", "algolizer/config/environment", "qunit", "@ember/test-helpers", "qunit-dom", "ember-qunit"], function (_app, _environment, QUnit, _testHelpers, _qunitDom, _emberQunit) {
   "use strict";
 
@@ -150,6 +171,18 @@ define("algolizer/tests/unit/controllers/pathfinding/index-test", ["qunit", "emb
 
     (0, _qunit.test)('it exists', function (assert) {
       let controller = this.owner.lookup('controller:pathfinding/index');
+      assert.ok(controller);
+    });
+  });
+});
+define("algolizer/tests/unit/controllers/sorting/index-test", ["qunit", "ember-qunit"], function (_qunit, _emberQunit) {
+  "use strict";
+
+  (0, _qunit.module)('Unit | Controller | sorting/index', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks); // TODO: Replace this with your real tests.
+
+    (0, _qunit.test)('it exists', function (assert) {
+      let controller = this.owner.lookup('controller:sorting/index');
       assert.ok(controller);
     });
   });
@@ -195,6 +228,18 @@ define("algolizer/tests/unit/services/drag-state-test", ["qunit", "ember-qunit"]
 
     (0, _qunit.test)('it exists', function (assert) {
       let service = this.owner.lookup('service:drag-state');
+      assert.ok(service);
+    });
+  });
+});
+define("algolizer/tests/unit/services/sorting-state-manager-test", ["qunit", "ember-qunit"], function (_qunit, _emberQunit) {
+  "use strict";
+
+  (0, _qunit.module)('Unit | Service | sorting-state-manager', function (hooks) {
+    (0, _emberQunit.setupTest)(hooks); // TODO: Replace this with your real tests.
+
+    (0, _qunit.test)('it exists', function (assert) {
+      let service = this.owner.lookup('service:sorting-state-manager');
       assert.ok(service);
     });
   });

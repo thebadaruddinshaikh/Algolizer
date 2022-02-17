@@ -54,7 +54,6 @@
   50% {
     transform: scale(1.2);
     transform-origin: center;
-    border-color: #595959;
   }
   100% {
     border-color: #595959;
@@ -75,23 +74,33 @@
   }
   100% {
     background-color: cyan;
-    border-color: cyan;
+    border-color: #0acfcf;
   }
 }
 nav {
   background-color: #3b3b3b;
   height: 60px;
   display: flex;
-  justify-content: space-around;
+  justify-content: flex-start;
   color: white;
   margin: 0px;
   padding: 10px 30px;
 }
 
-.nav-bar-options {
-  display: flex;
-  justify-content: space-evenly;
-  flex-grow: 2;
+.nav-bar-primary {
+  align-self: flex-start;
+  list-style-type: none;
+  border: 1px solid white;
+}
+
+.nav-bar-item {
+  float: left;
+  padding: 10px 30px;
+  background-color: #1d1d1d;
+}
+
+.nav-bar-item:hover {
+  border-bottom: 2px solid white;
 }
 
 .navbar-title {
@@ -101,6 +110,19 @@ nav {
 
 .grid-container {
   margin-top: 30px;
+}
+
+.bar {
+  width: 100px;
+  background-color: #595959;
+  border: 1px solid black;
+}
+
+.bar-container {
+  display: flex;
+  justify-content: center;
+  margin: 0px 80px;
+  border: 2px solid black;
 }
 
 /*# sourceMappingURL=algolizer.css.map */

@@ -1,6 +1,6 @@
 import Service from '@ember/service';
 import { tracked } from '@glimmer/tracking';
-export default class DragStateService extends Service {
+export default class PathFindingStateManagerService extends Service {
   @tracked dragging = false;
   @tracked underProgramControl = false;
   source = [9, 9];

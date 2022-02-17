@@ -93,7 +93,7 @@
     "isStrictMode": false
   });
 
-  let PathfindingBoxComponent = (_dec = (0, _service.inject)('drag-state'), (_class = class PathfindingBoxComponent extends _component2.default {
+  let PathfindingBoxComponent = (_dec = (0, _service.inject)('path-finding-state-manager'), (_class = class PathfindingBoxComponent extends _component2.default {
     constructor() {
       super(...arguments);
 
@@ -167,7 +167,7 @@
   _exports.default = PathfindingBoxComponent;
   (0, _component.setComponentTemplate)(__COLOCATED_TEMPLATE__, PathfindingBoxComponent);
 });
-;define("algolizer/components/sorting/bar", ["exports", "@ember/component", "@ember/template-factory", "@ember/component/template-only"], function (_exports, _component, _templateFactory, _templateOnly) {
+;define("algolizer/components/sorting/bar", ["exports", "@ember/component", "@ember/template-factory", "@glimmer/component"], function (_exports, _component, _templateFactory, _component2) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -177,18 +177,21 @@
 
   const __COLOCATED_TEMPLATE__ = (0, _templateFactory.createTemplateFactory)(
   /*
-    {{yield}}
+    <div class='bar' {{set-dimensions @height @width}}>
+  
+  </div>
   */
   {
-    "id": "qNhPxKLA",
-    "block": "[[[18,1,null]],[\"&default\"],false,[\"yield\"]]",
+    "id": "bz6FxH6e",
+    "block": "[[[11,0],[24,0,\"bar\"],[4,[38,0],[[30,1],[30,2]],null],[12],[1,\"\\n\\n\"],[13]],[\"@height\",\"@width\"],false,[\"set-dimensions\"]]",
     "moduleName": "algolizer/components/sorting/bar.hbs",
     "isStrictMode": false
   });
 
-  var _default = (0, _component.setComponentTemplate)(__COLOCATED_TEMPLATE__, (0, _templateOnly.default)());
+  class SortingBarComponent extends _component2.default {}
 
-  _exports.default = _default;
+  _exports.default = SortingBarComponent;
+  (0, _component.setComponentTemplate)(__COLOCATED_TEMPLATE__, SortingBarComponent);
 });
 ;define("algolizer/components/welcome-page", ["exports", "ember-welcome-page/components/welcome-page"], function (_exports, _welcomePage) {
   "use strict";
@@ -221,7 +224,7 @@
 
   function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and runs after the decorators transform.'); }
 
-  let PathfindingIndexController = (_dec = (0, _service.inject)('drag-state'), (_class = class PathfindingIndexController extends _controller.default {
+  let PathfindingIndexController = (_dec = (0, _service.inject)('path-finding-state-manager'), (_class = class PathfindingIndexController extends _controller.default {
     constructor() {
       super(...arguments);
 
@@ -249,15 +252,30 @@
 
     async visualize() {
       this.dragState.underProgramControl = true; //call for DFS
-      // let stack = [];
-      // stack.push(this.dragState.source);
-      // this.depthFirstSearch(stack);
-      //call for BFS
 
-      let queue = [];
-      queue.push(this.dragState.source);
-      await this.breadthFirstSearch(queue);
+      let stack = [];
+      stack.push(this.dragState.source);
+      await this.depthFirstSearch(stack); //call for BFS
+      // let queue = [];
+      // queue.push(this.dragState.source);
+      // await this.breadthFirstSearch(queue);
+
       this.dragState.underProgramControl = false;
+    }
+
+    clearBoard() {
+      for (let y = 0; y < this.grid.length; y++) {
+        for (let x = 0; x < this.grid[0].length; x++) {
+          if (this.grid[y][x].isWall) {
+            this.grid[y][x] = {
+              isWall: false,
+              isVisited: false
+            };
+          }
+        }
+      }
+
+      this.clearPath();
     }
 
     clearPath() {
@@ -343,7 +361,7 @@
           }
         }
 
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 5));
       }
     }
 
@@ -359,8 +377,76 @@
     initializer: function () {
       return this.model;
     }
-  }), _applyDecoratedDescriptor(_class.prototype, "onChangeHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onChangeHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "visualize", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "visualize"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearPath", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clearPath"), _class.prototype)), _class));
+  }), _applyDecoratedDescriptor(_class.prototype, "onChangeHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onChangeHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "visualize", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "visualize"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearBoard", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clearBoard"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearPath", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clearPath"), _class.prototype)), _class));
   _exports.default = PathfindingIndexController;
+});
+;define("algolizer/controllers/sorting/index", ["exports", "@ember/controller", "@glimmer/tracking", "@ember/object"], function (_exports, _controller, _tracking, _object) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+
+  var _class, _descriptor, _descriptor2;
+
+  function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
+
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
+
+  function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and runs after the decorators transform.'); }
+
+  let SortingIndexController = (_class = class SortingIndexController extends _controller.default {
+    constructor() {
+      super(...arguments);
+
+      _initializerDefineProperty(this, "barList", _descriptor, this);
+
+      _initializerDefineProperty(this, "sliderValue", _descriptor2, this);
+    }
+
+    generateList() {
+      this.barList = [];
+      let width = this.getContainerWidth / this.sliderValue;
+
+      for (let x = 0; x < this.sliderValue; x++) {
+        let randHeight = Math.random() * 273;
+        this.barList.push({
+          height: randHeight + 'px',
+          width: width + 'px'
+        });
+      }
+
+      this.barList = [...this.barList];
+    }
+
+    onSlide(event) {
+      this.sliderValue = event.currentTarget.value;
+      this.generateList();
+    }
+
+    get getContainerWidth() {
+      return document.querySelector('.bar-container').offsetWidth - 50;
+    }
+
+  }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "barList", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return [];
+    }
+  }), _descriptor2 = _applyDecoratedDescriptor(_class.prototype, "sliderValue", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return 20;
+    }
+  }), _applyDecoratedDescriptor(_class.prototype, "generateList", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "generateList"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "onSlide", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onSlide"), _class.prototype)), _class);
+  _exports.default = SortingIndexController;
 });
 ;define("algolizer/data-adapter", ["exports", "@ember-data/debug"], function (_exports, _debug) {
   "use strict";
@@ -608,6 +694,36 @@
 
   _exports.default = _default;
 });
+;define("algolizer/modifiers/prop", ["exports", "ember-prop-modifier"], function (_exports, _emberPropModifier) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "default", {
+    enumerable: true,
+    get: function () {
+      return _emberPropModifier.default;
+    }
+  });
+});
+;define("algolizer/modifiers/set-dimensions", ["exports", "ember-modifier"], function (_exports, _emberModifier) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+
+  var _default = (0, _emberModifier.modifier)(function setHeight(element, args
+  /*, positional, named*/
+  ) {
+    element.style.height = args[0];
+    element.style.widht = args[1];
+  });
+
+  _exports.default = _default;
+});
 ;define("algolizer/router", ["exports", "@ember/routing/router", "algolizer/config/environment"], function (_exports, _router, _environment) {
   "use strict";
 
@@ -662,6 +778,11 @@
       super(...arguments);
 
       _defineProperty(this, "grid", []);
+    }
+
+    beforeModel() {
+      this.grid = [];
+      this.grid = [...this.grid];
     }
 
     model() {
@@ -736,7 +857,33 @@
     }
   });
 });
-;define("algolizer/services/drag-state", ["exports", "@ember/service", "@glimmer/tracking"], function (_exports, _service, _tracking) {
+;define("algolizer/services/page-title-list", ["exports", "ember-page-title/services/page-title-list"], function (_exports, _pageTitleList) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "default", {
+    enumerable: true,
+    get: function () {
+      return _pageTitleList.default;
+    }
+  });
+});
+;define("algolizer/services/page-title", ["exports", "ember-page-title/services/page-title"], function (_exports, _pageTitle) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  Object.defineProperty(_exports, "default", {
+    enumerable: true,
+    get: function () {
+      return _pageTitle.default;
+    }
+  });
+});
+;define("algolizer/services/path-finding-state-manager", ["exports", "@ember/service", "@glimmer/tracking"], function (_exports, _service, _tracking) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -754,7 +901,7 @@
 
   function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and runs after the decorators transform.'); }
 
-  let DragStateService = (_class = class DragStateService extends _service.default {
+  let PathFindingStateManagerService = (_class = class PathFindingStateManagerService extends _service.default {
     constructor() {
       super(...arguments);
 
@@ -806,33 +953,19 @@
       return false;
     }
   })), _class);
-  _exports.default = DragStateService;
+  _exports.default = PathFindingStateManagerService;
 });
-;define("algolizer/services/page-title-list", ["exports", "ember-page-title/services/page-title-list"], function (_exports, _pageTitleList) {
+;define("algolizer/services/sorting-state-manager", ["exports", "@ember/service"], function (_exports, _service) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  Object.defineProperty(_exports, "default", {
-    enumerable: true,
-    get: function () {
-      return _pageTitleList.default;
-    }
-  });
-});
-;define("algolizer/services/page-title", ["exports", "ember-page-title/services/page-title"], function (_exports, _pageTitle) {
-  "use strict";
+  _exports.default = void 0;
 
-  Object.defineProperty(_exports, "__esModule", {
-    value: true
-  });
-  Object.defineProperty(_exports, "default", {
-    enumerable: true,
-    get: function () {
-      return _pageTitle.default;
-    }
-  });
+  class SortingStateManagerService extends _service.default {}
+
+  _exports.default = SortingStateManagerService;
 });
 ;define("algolizer/services/store", ["exports", "ember-data/store"], function (_exports, _store) {
   "use strict";
@@ -890,8 +1023,8 @@
   _exports.default = void 0;
 
   var _default = (0, _templateFactory.createTemplateFactory)({
-    "id": "9T6hZlAu",
-    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[10,\"nav\"],[12],[1,\"\\n  \"],[10,\"h1\"],[14,0,\"navbar-title\"],[12],[1,\"\\n    Path Finding\\n  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"nav-bar-options\"],[12],[1,\"\\n    \"],[10,2],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[11,2],[4,[38,1],[\"click\",[30,0,[\"visualize\"]]],null],[12],[1,\"Visualize!\"],[13],[1,\"\\n    \"],[11,2],[4,[38,1],[\"click\",[30,0,[\"clearPath\"]]],null],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container\"],[4,[38,2],[[30,0,[\"dragState\"]]],null],[12],[1,\"\\n\"],[1,\"  \"],[10,0],[14,0,\"center-row-container grid-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"on\",\"drag-manager\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
+    "id": "LVUGD4ew",
+    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[10,\"nav\"],[12],[1,\"\\n  \"],[10,\"h1\"],[14,0,\"navbar-title\"],[12],[1,\"\\n    Path Finding\\n  \"],[13],[1,\"\\n  \"],[10,\"ul\"],[14,0,\"nav-bar-primary\"],[12],[1,\"\\n    \"],[10,\"li\"],[14,0,\"nav-bar-item\"],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[11,\"li\"],[24,0,\"nav-bar-item\"],[4,[38,1],[\"click\",[30,0,[\"visualize\"]]],null],[12],[1,\"Visualize\"],[13],[1,\"\\n    \"],[11,\"li\"],[24,0,\"nav-bar-item\"],[4,[38,1],[\"click\",[30,0,[\"clearBoard\"]]],null],[12],[1,\"Clear Board\"],[13],[1,\"\\n    \"],[11,\"li\"],[24,0,\"nav-bar-item\"],[4,[38,1],[\"click\",[30,0,[\"clearPath\"]]],null],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container\"],[4,[38,2],[[30,0,[\"dragState\"]]],null],[12],[1,\"\\n\"],[1,\"  \"],[10,0],[14,0,\"center-row-container grid-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"on\",\"drag-manager\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
     "moduleName": "algolizer/templates/pathfinding/index.hbs",
     "isStrictMode": false
   });
@@ -907,8 +1040,8 @@
   _exports.default = void 0;
 
   var _default = (0, _templateFactory.createTemplateFactory)({
-    "id": "99h/GSUo",
-    "block": "[[[1,[28,[35,0],[\"Algolizer | Sorting\"],null]],[1,\"\\n\"],[10,\"h1\"],[12],[1,\"Sorting\"],[13]],[],false,[\"page-title\"]]",
+    "id": "Prq2sPFP",
+    "block": "[[[10,\"h1\"],[12],[1,\"Sorting\"],[13],[1,\"\\n\"],[11,\"input\"],[24,\"min\",\"10\"],[24,\"max\",\"100\"],[16,2,[29,[[30,0,[\"sliderValue\"]]]]],[24,4,\"range\"],[4,[38,0],[\"input\",[30,0,[\"onSlide\"]]],null],[12],[13],[1,\"\\n\"],[10,0],[14,0,\"bar-container\"],[12],[1,\"\\n\"],[42,[28,[37,2],[[28,[37,2],[[30,0,[\"barList\"]]],null]],null],null,[[[1,\"    \"],[8,[39,3],null,[[\"@height\",\"@width\"],[[28,[37,4],[[30,1],\"height\"],null],[28,[37,4],[[30,1],\"width\"],null]]],null],[1,\"\\n\"]],[1]],null],[13],[1,\"\\n\"],[11,\"button\"],[24,4,\"button\"],[4,[38,0],[\"click\",[30,0,[\"generateList\"]]],null],[12],[1,\"\\n  Generate List\\n\"],[13]],[\"bar\"],false,[\"on\",\"each\",\"-track-array\",\"sorting/bar\",\"get\"]]",
     "moduleName": "algolizer/templates/sorting/index.hbs",
     "isStrictMode": false
   });
@@ -990,7 +1123,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+5216f365"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+050bb938"});
           }
         
 //# sourceMappingURL=algolizer.map

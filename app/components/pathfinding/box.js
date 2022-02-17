@@ -4,7 +4,7 @@ import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 
 export default class PathfindingBoxComponent extends Component {
-  @service('drag-state') dragState;
+  @service('path-finding-state-manager') dragState;
 
   @tracked isWall = this.args.isWall;
   @tracked isVisited = this.args.isVisited;

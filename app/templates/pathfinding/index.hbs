@@ -4,11 +4,18 @@
   <h1 class='navbar-title'>
     Path Finding
   </h1>
-  <div class='nav-bar-options'>
+  <ul class='nav-bar-primary'>
+    <li class='nav-bar-item'>Algorithms</li>
+    <li class='nav-bar-item' {{on 'click' this.visualize}}>Visualize</li>
+    <li class='nav-bar-item' {{on 'click' this.clearBoard}}>Clear Board</li>
+    <li class='nav-bar-item' {{on 'click' this.clearPath}}>Clear Path</li>
+  </ul>
+  {{!-- <div class='nav-bar-options'>
     <p>Algorithms</p>
     <p {{on 'click' this.visualize}}>Visualize!</p>
+    <p {{on 'click' this.clearBoard}}>Clear Board</p>
     <p {{on 'click' this.clearPath}}>Clear Path</p>
-  </div>
+  </div> --}}
 </nav>
 
 <div class='center-container' {{drag-manager this.dragState}}>
