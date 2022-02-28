@@ -8,9 +8,16 @@
 />
 <div class='bar-container'>
   {{#each this.barList as |bar|}}
-    <Sorting::Bar @height={{get bar 'height'}} @width={{get bar 'width'}} />
+    <Sorting::Bar
+      @height={{get bar 'height'}}
+      @width={{get bar 'width'}}
+      @placed={{get bar 'placed'}}
+    />
   {{/each}}
 </div>
 <button type='button' {{on 'click' this.generateList}}>
   Generate List
+</button>
+<button type="button" {{on 'click' this.sort}}>
+  Sort!
 </button>

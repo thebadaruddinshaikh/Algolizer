@@ -22,17 +22,18 @@ nav {
 }
 .nav-bar-item {
   padding: 0px 30px;
+  border: 2px solid transparent;
   background-color: rgb(59, 59, 59);
   position: relative;
 }
 .nav-bar-item h4 {
   margin: 0px;
   padding: 25px;
+  padding-bottom: 5px;
   font-weight: lighter;
-  border: 2px solid transparent;
   cursor: pointer;
 }
-.nav-bar-item h4:hover {
+.nav-bar-item:hover {
   border-bottom: 2px solid white;
 }
 .drop-down-list {
@@ -52,4 +53,11 @@ nav {
 .drop-down-item:hover {
   background-color: rgb(29, 29, 29);
   cursor: pointer;
+}
+.selected-option {
+  margin: 0px;
+  padding: 0px;
+  padding-bottom: 5px;
+  font-size: 15px;
+  text-align: center;
 }

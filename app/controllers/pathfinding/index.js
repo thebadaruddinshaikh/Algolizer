@@ -8,18 +8,8 @@ export default class PathfindingIndexController extends Controller {
 
   @tracked grid = this.model;
 
-  async updateWithRebuild(x, y, isWall, isVisited) {
-    this.grid[y][x] = {
-      isWall: isWall,
-      isVisited: isVisited,
-    };
-    this.grid = [...this.grid];
-  }
-
-  updateWithoutRebuild(x, y, isWall, isVisited) {
-    this.grid[y][x].isWall = isWall;
-    this.grid[y][x].isVisited = isVisited;
-  }
+  @tracked selectedAlgo = 'No Selection';
+  @tracked selectedSpeed = 'No Selection';
 
   @action
   onChangeHandler(pos, wall, visited) {
@@ -30,17 +20,24 @@ export default class PathfindingIndexController extends Controller {
   async visualize() {
     this.dragState.underProgramControl = true;
 
-    //call for DFS
-    let stack = [];
-    stack.push(this.dragState.source);
-    await this.depthFirstSearch(stack);
-
-    //call for BFS
-    // let queue = [];
-    // queue.push(this.dragState.source);
-    // await this.breadthFirstSearch(queue);
+    if (this.selectedAlgo == 'DFS') {
+      let stack = [];
+      stack.push(this.dragState.source);
+      await this.depthFirstSearch(stack);
+    } else if (this.selectedAlgo == 'BFS') {
+      let queue = [];
+      queue.push(this.dragState.source);
+      await this.breadthFirstSearch(queue);
+    }
 
     this.dragState.underProgramControl = false;
+  }
+
+  @action updateSelectedAlgorithm(option) {
+    this.selectedAlgo = option;
+  }
+  @action updateSelectedSpeed(option) {
+    this.selectedSpeed = option;
   }
 
   @action
@@ -71,6 +68,19 @@ export default class PathfindingIndexController extends Controller {
       }
     }
     this.grid = [...this.grid];
+  }
+
+  async updateWithRebuild(x, y, isWall, isVisited) {
+    this.grid[y][x] = {
+      isWall: isWall,
+      isVisited: isVisited,
+    };
+    this.grid = [...this.grid];
+  }
+
+  updateWithoutRebuild(x, y, isWall, isVisited) {
+    this.grid[y][x].isWall = isWall;
+    this.grid[y][x].isVisited = isVisited;
   }
 
   async depthFirstSearch(stack) {
