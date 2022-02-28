@@ -1,24 +1,12 @@
 {{page-title 'Algolizer | Pathfinding'}}
 
-<nav>
-  <h1 class='navbar-title'>
-    Path Finding
-  </h1>
-  <ul class='nav-bar-primary'>
-    <li class='nav-bar-item'>Algorithms</li>
-    <li class='nav-bar-item' {{on 'click' this.visualize}}>Visualize</li>
-    <li class='nav-bar-item' {{on 'click' this.clearBoard}}>Clear Board</li>
-    <li class='nav-bar-item' {{on 'click' this.clearPath}}>Clear Path</li>
-  </ul>
-  {{!-- <div class='nav-bar-options'>
-    <p>Algorithms</p>
-    <p {{on 'click' this.visualize}}>Visualize!</p>
-    <p {{on 'click' this.clearBoard}}>Clear Board</p>
-    <p {{on 'click' this.clearPath}}>Clear Path</p>
-  </div> --}}
-</nav>
+<Pathfinding::Navbar
+  @visualize={{this.visualize}}
+  @clearBoard={{this.clearBoard}}
+  @clearPath={{this.clearPath}}
+/>
 
-<div class='center-container' {{drag-manager this.dragState}}>
+<div class='center-container grid-container' {{drag-manager this.dragState}}>
   {{!-- {{#each this.grid as |row Y|}}
     <div class='center-row-container'>
       {{#each row as |box X|}}
@@ -31,7 +19,7 @@
       {{/each}}
     </div>
   {{/each}} --}}
-  <div class='center-row-container grid-container'>
+  <div class='center-row-container'>
     {{#each (get this.grid 0) as |box index|}}
       <Pathfinding::Box
         @isWall={{get box 'isWall'}}

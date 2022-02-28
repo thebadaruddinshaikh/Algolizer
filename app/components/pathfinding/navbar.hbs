@@ -1,0 +1,46 @@
+<nav>
+  <div class='nav-bar-headers'>
+    <h1>
+      Algolizer
+      <sub>Path-finding</sub>
+    </h1>
+
+  </div>
+  <div
+    class='nav-bar-item'
+    {{on 'mouseenter' this.showDropDown}}
+    {{on 'mouseleave' this.hideDropDown}}
+    id='algo'
+  >
+    <h4>Algorithms</h4>
+    <div class='drop-down-list algo-drop-down'>
+      <p class='drop-down-item algo-name'>BFS (Breadth-first Search)</p>
+      <p class='drop-down-item algo-name'>DFS (Depth-first Search)</p>
+      <p class='drop-down-item algo-name'>Dijkstras</p>
+      <p class='drop-down-item algo-name'>A*</p>
+    </div>
+  </div>
+
+  <div
+    class='nav-bar-item'
+    {{on 'mouseenter' this.showDropDown}}
+    {{on 'mouseleave' this.hideDropDown}}
+    id='speed'
+  >
+    <h4>Set Speed</h4>
+    <div class='drop-down-list speed-drop-down'>
+      <p class='drop-down-item speed-name'>Fast</p>
+      <p class='drop-down-item speed-name'>Medium</p>
+      <p class='drop-down-item speed-name'>Slow</p>
+    </div>
+  </div>
+  <div class='nav-bar-item'>
+    <h4>Visualize</h4>
+  </div>
+  <div class='nav-bar-item' {{on 'click' @clearPath}}>
+    <h4>Clear Path</h4>
+  </div>
+  <div class='nav-bar-item' {{on 'click' @clearBoard}}>
+    <h4>Clear Board</h4>
+  </div>
+</nav>

@@ -1,30 +1,3 @@
-nav {
-  background-color: rgb(59, 59, 59);
-  height: 60px;
-  display: flex;
-  justify-content: flex-start;
-  color: white;
-  margin: 0px;
-  padding: 10px 30px;
-}
-.nav-bar-primary {
-  align-self: flex-start;
-  list-style-type: none;
-  border: 1px solid white;
-}
-.nav-bar-item {
-  float: left;
-  padding: 10px 30px;
-  background-color: rgb(29, 29, 29);
-}
-.nav-bar-item:hover {
-  border-bottom: 2px solid white;
-}
-.navbar-title {
-  margin: 0px;
-  padding: 10px 0px;
-}
-
 .grid-container {
   margin-top: 30px;
 }
