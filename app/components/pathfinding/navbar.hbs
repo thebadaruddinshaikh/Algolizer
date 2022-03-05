@@ -17,15 +17,22 @@
       {{@algo}}
     </p>
     <div class='drop-down-list algo-drop-down'>
-      <p class='drop-down-item' {{on 'click' (fn @updateAlgo 'BFS')}}>BFS
-        (Breadth-first Search)</p>
-      <p class='drop-down-item' {{on 'click' (fn @updateAlgo 'DFS')}}>DFS
-        (Depth-first Search)</p>
       <p
         class='drop-down-item'
-        {{on 'click' (fn @updateAlgo 'Dijkstras')}}
+        {{on 'click' (fn this.onSelectAlgorithm 'BFS')}}
+      >BFS (Breadth-first Search)</p>
+      <p
+        class='drop-down-item'
+        {{on 'click' (fn this.onSelectAlgorithm 'DFS')}}
+      >DFS (Depth-first Search)</p>
+      <p
+        class='drop-down-item'
+        {{on 'click' (fn this.onSelectAlgorithm 'Dijkstras')}}
       >Dijkstras</p>
-      <p class='drop-down-item' {{on 'click' (fn @updateAlgo 'A*')}}>A*</p>
+      <p
+        class='drop-down-item'
+        {{on 'click' (fn this.onSelectAlgorithm 'A*')}}
+      >A*</p>
     </div>
   </div>
 
@@ -40,12 +47,18 @@
       {{@speed}}
     </p>
     <div class='drop-down-list speed-drop-down'>
-      <p class='drop-down-item' {{on 'click' (fn @updateSpeed 'Fast')}}>Fast</p>
       <p
         class='drop-down-item'
-        {{on 'click' (fn @updateSpeed 'Medium')}}
+        {{on 'click' (fn this.onSelectSpeed 'Fast')}}
+      >Fast</p>
+      <p
+        class='drop-down-item'
+        {{on 'click' (fn this.onSelectSpeed 'Medium')}}
       >Medium</p>
-      <p class='drop-down-item' {{on 'click' (fn @updateSpeed 'Slow')}}>Slow</p>
+      <p
+        class='drop-down-item'
+        {{on 'click' (fn this.onSelectSpeed 'Slow')}}
+      >Slow</p>
     </div>
   </div>
   <div class='nav-bar-item' {{on 'click' @visualize}}>

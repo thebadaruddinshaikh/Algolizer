@@ -76,19 +76,19 @@
   /*
     <div
     class='box {{this.getClasses}}'
-    {{on 'click' this.touch}}
-    {{on 'mouseenter' this.onDrag}}
+    {{on 'click' this.clickHandler}}
+    {{on 'mouseenter' this.dragHandler}}
   >
     {{#if this.isSource}}
-      S
+      <p class='source'>></p>
     {{else if this.isDestination}}
       D
     {{/if}}
   </div>
   */
   {
-    "id": "kvp58T0N",
-    "block": "[[[11,0],[16,0,[29,[\"box \",[30,0,[\"getClasses\"]]]]],[4,[38,0],[\"click\",[30,0,[\"touch\"]]],null],[4,[38,0],[\"mouseenter\",[30,0,[\"onDrag\"]]],null],[12],[1,\"\\n\"],[41,[30,0,[\"isSource\"]],[[[1,\"    S\\n\"]],[]],[[[41,[30,0,[\"isDestination\"]],[[[1,\"    D\\n  \"]],[]],null]],[]]],[13]],[],false,[\"on\",\"if\"]]",
+    "id": "jfNDqQyc",
+    "block": "[[[11,0],[16,0,[29,[\"box \",[30,0,[\"getClasses\"]]]]],[4,[38,0],[\"click\",[30,0,[\"clickHandler\"]]],null],[4,[38,0],[\"mouseenter\",[30,0,[\"dragHandler\"]]],null],[12],[1,\"\\n\"],[41,[30,0,[\"isSource\"]],[[[1,\"    \"],[10,2],[14,0,\"source\"],[12],[1,\">\"],[13],[1,\"\\n\"]],[]],[[[41,[30,0,[\"isDestination\"]],[[[1,\"    D\\n  \"]],[]],null]],[]]],[13]],[],false,[\"on\",\"if\"]]",
     "moduleName": "algolizer/components/pathfinding/box.hbs",
     "isStrictMode": false
   });
@@ -97,43 +97,15 @@
     constructor() {
       super(...arguments);
 
-      _initializerDefineProperty(this, "dragState", _descriptor, this);
+      _initializerDefineProperty(this, "stateManager", _descriptor, this);
 
       _initializerDefineProperty(this, "isWall", _descriptor2, this);
 
       _initializerDefineProperty(this, "isVisited", _descriptor3, this);
 
-      _defineProperty(this, "isVisited", this.args.isVisited);
+      _defineProperty(this, "isSource", this.stateManager.isSource(this.args.arrPos));
 
-      _defineProperty(this, "position", this.args.arrPos);
-
-      _defineProperty(this, "onChange", this.args.onChange);
-
-      _defineProperty(this, "isSource", this.dragState.isSource(this.position));
-
-      _defineProperty(this, "isDestination", this.dragState.isDestination(this.position));
-    }
-
-    touch() {
-      this.interactHandler();
-    }
-
-    onDrag() {
-      if (this.dragState.dragging) {
-        this.interactHandler();
-      }
-    }
-
-    interactHandler() {
-      if (!this.isSource && !this.isDestination && !this.inProgress) {
-        this.isWall = !this.isWall;
-        this.isVisited = false;
-        this.onChange(this.position, this.isWall, false);
-      }
-    }
-
-    get inProgress() {
-      return this.dragState.underProgramControl;
+      _defineProperty(this, "isDestination", this.stateManager.isDestination(this.args.arrPos));
     }
 
     get getClasses() {
@@ -144,7 +116,25 @@
       }
     }
 
-  }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "dragState", [_dec], {
+    clickHandler() {
+      this.interactionHandler();
+    }
+
+    dragHandler() {
+      if (this.stateManager.dragging) {
+        this.interactionHandler();
+      }
+    }
+
+    interactionHandler() {
+      if (!this.isSource && !this.isDestination && !this.stateManager.underProgramControl) {
+        this.isWall = !this.isWall;
+        this.isVisited = false;
+        this.args.onChange(this.args.arrPos, this.isWall, false);
+      }
+    }
+
+  }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "stateManager", [_dec], {
     configurable: true,
     enumerable: true,
     writable: true,
@@ -163,9 +153,157 @@
     initializer: function () {
       return this.args.isVisited;
     }
-  }), _applyDecoratedDescriptor(_class.prototype, "touch", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "touch"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "onDrag", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onDrag"), _class.prototype)), _class));
+  }), _applyDecoratedDescriptor(_class.prototype, "clickHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clickHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "dragHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "dragHandler"), _class.prototype)), _class));
   _exports.default = PathfindingBoxComponent;
   (0, _component.setComponentTemplate)(__COLOCATED_TEMPLATE__, PathfindingBoxComponent);
+});
+;define("algolizer/components/pathfinding/navbar", ["exports", "@ember/component", "@ember/template-factory", "@glimmer/component", "@ember/object", "@ember/service"], function (_exports, _component, _templateFactory, _component2, _object, _service) {
+  "use strict";
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+
+  var _dec, _class, _descriptor;
+
+  function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
+
+  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+  function _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if ('value' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }
+
+  function _initializerWarningHelper(descriptor, context) { throw new Error('Decorating class property failed. Please ensure that ' + 'proposal-class-properties is enabled and runs after the decorators transform.'); }
+
+  const __COLOCATED_TEMPLATE__ = (0, _templateFactory.createTemplateFactory)(
+  /*
+    <nav>
+    <div class='nav-bar-headers'>
+      <h1>
+        Algolizer
+        <sub>Path-finding</sub>
+      </h1>
+  
+    </div>
+    <div
+      class='nav-bar-item'
+      {{on 'mouseenter' this.showDropDown}}
+      {{on 'mouseleave' this.hideDropDown}}
+      id='algo'
+    >
+      <h4>Algorithms</h4>
+      <p class='selected-option'>
+        {{@algo}}
+      </p>
+      <div class='drop-down-list algo-drop-down'>
+        <p
+          class='drop-down-item'
+          {{on 'click' (fn this.onSelectAlgorithm 'BFS')}}
+        >BFS (Breadth-first Search)</p>
+        <p
+          class='drop-down-item'
+          {{on 'click' (fn this.onSelectAlgorithm 'DFS')}}
+        >DFS (Depth-first Search)</p>
+        <p
+          class='drop-down-item'
+          {{on 'click' (fn this.onSelectAlgorithm 'Dijkstras')}}
+        >Dijkstras</p>
+        <p
+          class='drop-down-item'
+          {{on 'click' (fn this.onSelectAlgorithm 'A*')}}
+        >A*</p>
+      </div>
+    </div>
+  
+    <div
+      class='nav-bar-item'
+      {{on 'mouseenter' this.showDropDown}}
+      {{on 'mouseleave' this.hideDropDown}}
+      id='speed'
+    >
+      <h4>Set Speed</h4>
+      <p class='selected-option'>
+        {{@speed}}
+      </p>
+      <div class='drop-down-list speed-drop-down'>
+        <p
+          class='drop-down-item'
+          {{on 'click' (fn this.onSelectSpeed 'Fast')}}
+        >Fast</p>
+        <p
+          class='drop-down-item'
+          {{on 'click' (fn this.onSelectSpeed 'Medium')}}
+        >Medium</p>
+        <p
+          class='drop-down-item'
+          {{on 'click' (fn this.onSelectSpeed 'Slow')}}
+        >Slow</p>
+      </div>
+    </div>
+    <div class='nav-bar-item' {{on 'click' @visualize}}>
+      <h4>Visualize</h4>
+    </div>
+    <div class='nav-bar-item' {{on 'click' @clearPath}}>
+      <h4>Clear Path</h4>
+    </div>
+    <div class='nav-bar-item' {{on 'click' @clearBoard}}>
+      <h4>Clear Board</h4>
+    </div>
+  </nav>
+  */
+  {
+    "id": "cDWs9K+f",
+    "block": "[[[10,\"nav\"],[12],[1,\"\\n  \"],[10,0],[14,0,\"nav-bar-headers\"],[12],[1,\"\\n    \"],[10,\"h1\"],[12],[1,\"\\n      Algolizer\\n      \"],[10,\"sub\"],[12],[1,\"Path-finding\"],[13],[1,\"\\n    \"],[13],[1,\"\\n\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"algo\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,1]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list algo-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"BFS\"],null]],null],[12],[1,\"BFS (Breadth-first Search)\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"DFS\"],null]],null],[12],[1,\"DFS (Depth-first Search)\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"Dijkstras\"],null]],null],[12],[1,\"Dijkstras\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"A*\"],null]],null],[12],[1,\"A*\"],[13],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"speed\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Set Speed\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,2]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list speed-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Fast\"],null]],null],[12],[1,\"Fast\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Medium\"],null]],null],[12],[1,\"Medium\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Slow\"],null]],null],[12],[1,\"Slow\"],[13],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,3]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Visualize\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,4]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,5]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Board\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13]],[\"@algo\",\"@speed\",\"@visualize\",\"@clearPath\",\"@clearBoard\"],false,[\"on\",\"fn\"]]",
+    "moduleName": "algolizer/components/pathfinding/navbar.hbs",
+    "isStrictMode": false
+  });
+
+  let PathfindingNavbarComponent = (_dec = (0, _service.inject)('path-finding-state-manager'), (_class = class PathfindingNavbarComponent extends _component2.default {
+    constructor() {
+      super(...arguments);
+
+      _initializerDefineProperty(this, "stateManager", _descriptor, this);
+
+      _defineProperty(this, "itemDropDownMap", {
+        algo: '.algo-drop-down',
+        speed: '.speed-drop-down'
+      });
+    }
+
+    onSelectAlgorithm(selectedAlgorithm) {
+      if (!this.stateManager.underProgramControl) {
+        this.args.updateAlgo(selectedAlgorithm);
+        this.hideDropDown('algo');
+      }
+    }
+
+    onSelectSpeed(selectedSpeed) {
+      if (!this.stateManager.underProgramControl) {
+        this.args.updateSpeed(selectedSpeed);
+        this.hideDropDown('speed');
+      }
+    }
+
+    showDropDown(event) {
+      let menuId = event.srcElement ? event.srcElement.id : event;
+      let dropDownMenu = document.querySelector(this.itemDropDownMap[menuId]);
+      dropDownMenu.style.top = '85px';
+    }
+
+    hideDropDown(event) {
+      let menuId = event.srcElement ? event.srcElement.id : event;
+      let dropDownMenu = document.querySelector(this.itemDropDownMap[menuId]);
+      dropDownMenu.style.top = '-200px';
+    }
+
+  }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "stateManager", [_dec], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: null
+  }), _applyDecoratedDescriptor(_class.prototype, "onSelectAlgorithm", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onSelectAlgorithm"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "onSelectSpeed", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onSelectSpeed"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "showDropDown", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "showDropDown"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "hideDropDown", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "hideDropDown"), _class.prototype)), _class));
+  _exports.default = PathfindingNavbarComponent;
+  (0, _component.setComponentTemplate)(__COLOCATED_TEMPLATE__, PathfindingNavbarComponent);
 });
 ;define("algolizer/components/sorting/bar", ["exports", "@ember/component", "@ember/template-factory", "@glimmer/component"], function (_exports, _component, _templateFactory, _component2) {
   "use strict";
@@ -177,13 +315,13 @@
 
   const __COLOCATED_TEMPLATE__ = (0, _templateFactory.createTemplateFactory)(
   /*
-    <div class='bar' {{set-dimensions @height @width}}>
+    <div class='bar {{if @placed "placed"}}' {{set-dimensions @height @width}}>
   
   </div>
   */
   {
-    "id": "bz6FxH6e",
-    "block": "[[[11,0],[24,0,\"bar\"],[4,[38,0],[[30,1],[30,2]],null],[12],[1,\"\\n\\n\"],[13]],[\"@height\",\"@width\"],false,[\"set-dimensions\"]]",
+    "id": "eARbzeu7",
+    "block": "[[[11,0],[16,0,[29,[\"bar \",[52,[30,1],\"placed\"]]]],[4,[38,1],[[30,2],[30,3]],null],[12],[1,\"\\n\\n\"],[13]],[\"@placed\",\"@height\",\"@width\"],false,[\"if\",\"set-dimensions\"]]",
     "moduleName": "algolizer/components/sorting/bar.hbs",
     "isStrictMode": false
   });
@@ -214,7 +352,7 @@
   });
   _exports.default = void 0;
 
-  var _dec, _class, _descriptor, _descriptor2;
+  var _dec, _class, _descriptor, _descriptor2, _descriptor3, _descriptor4;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -228,39 +366,55 @@
     constructor() {
       super(...arguments);
 
-      _initializerDefineProperty(this, "dragState", _descriptor, this);
+      _initializerDefineProperty(this, "stateManager", _descriptor, this);
 
       _initializerDefineProperty(this, "grid", _descriptor2, this);
-    }
 
-    async updateWithRebuild(x, y, isWall, isVisited) {
-      this.grid[y][x] = {
-        isWall: isWall,
-        isVisited: isVisited
-      };
-      this.grid = [...this.grid];
-    }
+      _initializerDefineProperty(this, "selectedAlgo", _descriptor3, this);
 
-    updateWithoutRebuild(x, y, isWall, isVisited) {
-      this.grid[y][x].isWall = isWall;
-      this.grid[y][x].isVisited = isVisited;
+      _initializerDefineProperty(this, "selectedSpeed", _descriptor4, this);
+
+      _defineProperty(this, "delayMap", {
+        Slow: 250,
+        Medium: 100,
+        Fast: 50
+      });
     }
 
     onChangeHandler(pos, wall, visited) {
       this.updateWithoutRebuild(pos[0], pos[1], wall, visited);
     }
 
+    enableDragging() {
+      this.stateManager.startDragging();
+    }
+
+    disableDragging() {
+      this.stateManager.stopDragging();
+    }
+
     async visualize() {
-      this.dragState.underProgramControl = true; //call for DFS
+      this.stateManager.underProgramControl = true;
 
-      let stack = [];
-      stack.push(this.dragState.source);
-      await this.depthFirstSearch(stack); //call for BFS
-      // let queue = [];
-      // queue.push(this.dragState.source);
-      // await this.breadthFirstSearch(queue);
+      if (this.selectedAlgo == 'DFS') {
+        let stack = [];
+        stack.push(this.stateManager.source);
+        await this.depthFirstSearch(stack, this.delayMap[this.selectedSpeed]);
+      } else if (this.selectedAlgo == 'BFS') {
+        let queue = [];
+        queue.push(this.stateManager.source);
+        await this.breadthFirstSearch(queue, this.delayMap[this.selectedSpeed]);
+      }
 
-      this.dragState.underProgramControl = false;
+      this.stateManager.underProgramControl = false;
+    }
+
+    updateSelectedAlgorithm(option) {
+      this.selectedAlgo = option;
+    }
+
+    updateSelectedSpeed(option) {
+      this.selectedSpeed = option;
     }
 
     clearBoard() {
@@ -293,7 +447,20 @@
       this.grid = [...this.grid];
     }
 
-    async depthFirstSearch(stack) {
+    async updateWithRebuild(x, y, isWall, isVisited) {
+      this.grid[y][x] = {
+        isWall: isWall,
+        isVisited: isVisited
+      };
+      this.grid = [...this.grid];
+    }
+
+    updateWithoutRebuild(x, y, isWall, isVisited) {
+      this.grid[y][x].isWall = isWall;
+      this.grid[y][x].isVisited = isVisited;
+    }
+
+    async depthFirstSearch(stack, speed) {
       let dy = [-1, 0, 1, 0];
       let dx = [0, 1, 0, -1];
 
@@ -306,7 +473,7 @@
 
         this.updateWithRebuild(box[0], box[1], false, true);
 
-        if (this.dragState.isDestination(box)) {
+        if (this.stateManager.isDestination(box)) {
           break;
         }
 
@@ -325,11 +492,11 @@
           }
         }
 
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, speed));
       }
     }
 
-    async breadthFirstSearch(queue) {
+    async breadthFirstSearch(queue, speed) {
       let dy = [-1, 0, 1, 0];
       let dx = [0, 1, 0, -1];
 
@@ -342,7 +509,7 @@
 
         this.updateWithRebuild(box[0], box[1], false, true);
 
-        if (this.dragState.isDestination(box)) {
+        if (this.stateManager.isDestination(box)) {
           break;
         }
 
@@ -361,11 +528,11 @@
           }
         }
 
-        await new Promise(r => setTimeout(r, 5));
+        await new Promise(r => setTimeout(r, speed));
       }
     }
 
-  }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "dragState", [_dec], {
+  }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "stateManager", [_dec], {
     configurable: true,
     enumerable: true,
     writable: true,
@@ -377,7 +544,21 @@
     initializer: function () {
       return this.model;
     }
-  }), _applyDecoratedDescriptor(_class.prototype, "onChangeHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onChangeHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "visualize", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "visualize"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearBoard", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clearBoard"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearPath", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clearPath"), _class.prototype)), _class));
+  }), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "selectedAlgo", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return 'No Selection';
+    }
+  }), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "selectedSpeed", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return 'Medium';
+    }
+  }), _applyDecoratedDescriptor(_class.prototype, "onChangeHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onChangeHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "enableDragging", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "enableDragging"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "disableDragging", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "disableDragging"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "visualize", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "visualize"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateSelectedAlgorithm", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "updateSelectedAlgorithm"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "updateSelectedSpeed", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "updateSelectedSpeed"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearBoard", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clearBoard"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "clearPath", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clearPath"), _class.prototype)), _class));
   _exports.default = PathfindingIndexController;
 });
 ;define("algolizer/controllers/sorting/index", ["exports", "@ember/controller", "@glimmer/tracking", "@ember/object"], function (_exports, _controller, _tracking, _object) {
@@ -412,14 +593,17 @@
       let width = this.getContainerWidth / this.sliderValue;
 
       for (let x = 0; x < this.sliderValue; x++) {
-        let randHeight = Math.random() * 273;
+        let randHeight = Math.ceil(Math.random() * 373);
         this.barList.push({
-          height: randHeight + 'px',
-          width: width + 'px'
+          height: randHeight,
+          width: width,
+          comparer: false,
+          comparee: false,
+          placed: false
         });
       }
 
-      this.barList = [...this.barList];
+      this.triggerRebuild();
     }
 
     onSlide(event) {
@@ -427,8 +611,40 @@
       this.generateList();
     }
 
+    async sort() {
+      for (let x = 0; x < this.barList.length - 1; x++) {
+        let y;
+
+        for (y = 0; y < this.barList.length - x - 1; y++) {
+          if (this.barList[y].height > this.barList[y + 1].height) {
+            let temp = this.barList[y];
+            this.barList[y] = this.barList[y + 1];
+            this.barList[y + 1] = temp;
+            this.triggerRebuild();
+            await new Promise(r => setTimeout(r, 1));
+          }
+        }
+
+        this.markedPlaced(y);
+      }
+
+      console.log(this.barList);
+    }
+
+    markedPlaced(position) {
+      this.barList[position] = {
+        height: this.barList[position].height,
+        width: this.barList[position].width,
+        placed: true
+      };
+    }
+
     get getContainerWidth() {
       return document.querySelector('.bar-container').offsetWidth - 50;
+    }
+
+    triggerRebuild() {
+      this.barList = [...this.barList];
     }
 
   }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "barList", [_tracking.tracked], {
@@ -445,7 +661,7 @@
     initializer: function () {
       return 20;
     }
-  }), _applyDecoratedDescriptor(_class.prototype, "generateList", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "generateList"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "onSlide", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onSlide"), _class.prototype)), _class);
+  }), _applyDecoratedDescriptor(_class.prototype, "generateList", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "generateList"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "onSlide", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "onSlide"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "sort", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "sort"), _class.prototype)), _class);
   _exports.default = SortingIndexController;
 });
 ;define("algolizer/data-adapter", ["exports", "@ember-data/debug"], function (_exports, _debug) {
@@ -673,27 +889,6 @@
   };
   _exports.default = _default;
 });
-;define("algolizer/modifiers/drag-manager", ["exports", "ember-modifier"], function (_exports, _emberModifier) {
-  "use strict";
-
-  Object.defineProperty(_exports, "__esModule", {
-    value: true
-  });
-  _exports.default = void 0;
-
-  var _default = (0, _emberModifier.modifier)(function dragManager(element, args
-  /*, positional, named*/
-  ) {
-    element.addEventListener('mousedown', () => {
-      args[0].startDragging();
-    });
-    element.addEventListener('mouseup', () => {
-      args[0].stopDragging();
-    });
-  });
-
-  _exports.default = _default;
-});
 ;define("algolizer/modifiers/prop", ["exports", "ember-prop-modifier"], function (_exports, _emberPropModifier) {
   "use strict";
 
@@ -718,8 +913,8 @@
   var _default = (0, _emberModifier.modifier)(function setHeight(element, args
   /*, positional, named*/
   ) {
-    element.style.height = args[0];
-    element.style.widht = args[1];
+    element.style.height = args[0] + 'px';
+    element.style.widht = args[1] + 'px';
   });
 
   _exports.default = _default;
@@ -781,6 +976,7 @@
     }
 
     beforeModel() {
+      console.log('');
       this.grid = [];
       this.grid = [...this.grid];
     }
@@ -1023,8 +1219,8 @@
   _exports.default = void 0;
 
   var _default = (0, _templateFactory.createTemplateFactory)({
-    "id": "LVUGD4ew",
-    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[10,\"nav\"],[12],[1,\"\\n  \"],[10,\"h1\"],[14,0,\"navbar-title\"],[12],[1,\"\\n    Path Finding\\n  \"],[13],[1,\"\\n  \"],[10,\"ul\"],[14,0,\"nav-bar-primary\"],[12],[1,\"\\n    \"],[10,\"li\"],[14,0,\"nav-bar-item\"],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[11,\"li\"],[24,0,\"nav-bar-item\"],[4,[38,1],[\"click\",[30,0,[\"visualize\"]]],null],[12],[1,\"Visualize\"],[13],[1,\"\\n    \"],[11,\"li\"],[24,0,\"nav-bar-item\"],[4,[38,1],[\"click\",[30,0,[\"clearBoard\"]]],null],[12],[1,\"Clear Board\"],[13],[1,\"\\n    \"],[11,\"li\"],[24,0,\"nav-bar-item\"],[4,[38,1],[\"click\",[30,0,[\"clearPath\"]]],null],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container\"],[4,[38,2],[[30,0,[\"dragState\"]]],null],[12],[1,\"\\n\"],[1,\"  \"],[10,0],[14,0,\"center-row-container grid-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"on\",\"drag-manager\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
+    "id": "DRQOPdaq",
+    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[8,[39,1],null,[[\"@visualize\",\"@clearBoard\",\"@clearPath\",\"@algo\",\"@speed\",\"@updateAlgo\",\"@updateSpeed\",\"@visualize\"],[[30,0,[\"visualize\"]],[30,0,[\"clearBoard\"]],[30,0,[\"clearPath\"]],[30,0,[\"selectedAlgo\"]],[30,0,[\"selectedSpeed\"]],[30,0,[\"updateSelectedAlgorithm\"]],[30,0,[\"updateSelectedSpeed\"]],[30,0,[\"visualize\"]]]],null],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container grid-container\"],[4,[38,2],[\"mousedown\",[30,0,[\"enableDragging\"]]],null],[4,[38,2],[\"mouseup\",[30,0,[\"disableDragging\"]]],null],[12],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"pathfinding/navbar\",\"on\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
     "moduleName": "algolizer/templates/pathfinding/index.hbs",
     "isStrictMode": false
   });
@@ -1040,8 +1236,8 @@
   _exports.default = void 0;
 
   var _default = (0, _templateFactory.createTemplateFactory)({
-    "id": "Prq2sPFP",
-    "block": "[[[10,\"h1\"],[12],[1,\"Sorting\"],[13],[1,\"\\n\"],[11,\"input\"],[24,\"min\",\"10\"],[24,\"max\",\"100\"],[16,2,[29,[[30,0,[\"sliderValue\"]]]]],[24,4,\"range\"],[4,[38,0],[\"input\",[30,0,[\"onSlide\"]]],null],[12],[13],[1,\"\\n\"],[10,0],[14,0,\"bar-container\"],[12],[1,\"\\n\"],[42,[28,[37,2],[[28,[37,2],[[30,0,[\"barList\"]]],null]],null],null,[[[1,\"    \"],[8,[39,3],null,[[\"@height\",\"@width\"],[[28,[37,4],[[30,1],\"height\"],null],[28,[37,4],[[30,1],\"width\"],null]]],null],[1,\"\\n\"]],[1]],null],[13],[1,\"\\n\"],[11,\"button\"],[24,4,\"button\"],[4,[38,0],[\"click\",[30,0,[\"generateList\"]]],null],[12],[1,\"\\n  Generate List\\n\"],[13]],[\"bar\"],false,[\"on\",\"each\",\"-track-array\",\"sorting/bar\",\"get\"]]",
+    "id": "4mHwdD/a",
+    "block": "[[[10,\"h1\"],[12],[1,\"Sorting\"],[13],[1,\"\\n\\n\"],[10,2],[12],[1,\"This is an\\n  \"],[10,\"b\"],[12],[1,\"Unfinished\"],[13],[1,\"\\n  part of the project but you can still see it sort.\"],[13],[1,\"\\n\"],[11,\"input\"],[24,\"min\",\"10\"],[24,\"max\",\"100\"],[16,2,[29,[[30,0,[\"sliderValue\"]]]]],[24,4,\"range\"],[4,[38,0],[\"input\",[30,0,[\"onSlide\"]]],null],[12],[13],[1,\"\\n\"],[10,0],[14,0,\"bar-container\"],[12],[1,\"\\n\"],[42,[28,[37,2],[[28,[37,2],[[30,0,[\"barList\"]]],null]],null],null,[[[1,\"    \"],[8,[39,3],null,[[\"@height\",\"@width\",\"@placed\"],[[28,[37,4],[[30,1],\"height\"],null],[28,[37,4],[[30,1],\"width\"],null],[28,[37,4],[[30,1],\"placed\"],null]]],null],[1,\"\\n\"]],[1]],null],[13],[1,\"\\n\"],[11,\"button\"],[24,4,\"button\"],[4,[38,0],[\"click\",[30,0,[\"generateList\"]]],null],[12],[1,\"\\n  Generate List\\n\"],[13],[1,\"\\n\"],[11,\"button\"],[24,4,\"button\"],[4,[38,0],[\"click\",[30,0,[\"sort\"]]],null],[12],[1,\"\\n  Sort!\\n\"],[13]],[\"bar\"],false,[\"on\",\"each\",\"-track-array\",\"sorting/bar\",\"get\"]]",
     "moduleName": "algolizer/templates/sorting/index.hbs",
     "isStrictMode": false
   });
@@ -1123,7 +1319,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+050bb938"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+9b821b5a"});
           }
         
 //# sourceMappingURL=algolizer.map

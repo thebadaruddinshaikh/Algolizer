@@ -11,19 +11,11 @@
   @visualize={{this.visualize}}
 />
 
-<div class='center-container grid-container' {{drag-manager this.dragState}}>
-  {{!-- {{#each this.grid as |row Y|}}
-    <div class='center-row-container'>
-      {{#each row as |box X|}}
-        <Pathfinding::Box
-          @isWall={{get box 'isWall'}}
-          @isVisited={{get box 'isVisited'}}
-          @arrPos={{array Y X}}
-          @onChange={{this.onChangeHandler}}
-        />
-      {{/each}}
-    </div>
-  {{/each}} --}}
+<div
+  class='center-container grid-container'
+  {{on 'mousedown' this.enableDragging}}
+  {{on 'mouseup' this.disableDragging}}
+>
   <div class='center-row-container'>
     {{#each (get this.grid 0) as |box index|}}
       <Pathfinding::Box

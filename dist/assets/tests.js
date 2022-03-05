@@ -76,6 +76,44 @@ define("algolizer/tests/integration/components/pathfinding/box-test", ["@ember/t
     });
   });
 });
+define("algolizer/tests/integration/components/pathfinding/navbar-test", ["@ember/template-factory", "qunit", "ember-qunit", "@ember/test-helpers"], function (_templateFactory, _qunit, _emberQunit, _testHelpers) {
+  "use strict";
+
+  (0, _qunit.module)('Integration | Component | pathfinding/navbar', function (hooks) {
+    (0, _emberQunit.setupRenderingTest)(hooks);
+    (0, _qunit.test)('it renders', async function (assert) {
+      // Set any properties with this.set('myProperty', 'value');
+      // Handle any actions with this.set('myAction', function(val) { ... });
+      await (0, _testHelpers.render)((0, _templateFactory.createTemplateFactory)(
+      /*
+        <Pathfinding::Navbar />
+      */
+      {
+        "id": "JouXstWp",
+        "block": "[[[8,[39,0],null,null,null]],[],false,[\"pathfinding/navbar\"]]",
+        "moduleName": "(unknown template module)",
+        "isStrictMode": false
+      }));
+      assert.dom(this.element).hasText(''); // Template block usage:
+
+      await (0, _testHelpers.render)((0, _templateFactory.createTemplateFactory)(
+      /*
+        
+            <Pathfinding::Navbar>
+              template block text
+            </Pathfinding::Navbar>
+          
+      */
+      {
+        "id": "RiXzf2In",
+        "block": "[[[1,\"\\n      \"],[8,[39,0],null,null,[[\"default\"],[[[[1,\"\\n        template block text\\n      \"]],[]]]]],[1,\"\\n    \"]],[],false,[\"pathfinding/navbar\"]]",
+        "moduleName": "(unknown template module)",
+        "isStrictMode": false
+      }));
+      assert.dom(this.element).hasText('template block text');
+    });
+  });
+});
 define("algolizer/tests/integration/components/sorting/bar-test", ["@ember/template-factory", "qunit", "ember-qunit", "@ember/test-helpers"], function (_templateFactory, _qunit, _emberQunit, _testHelpers) {
   "use strict";
 
@@ -111,27 +149,6 @@ define("algolizer/tests/integration/components/sorting/bar-test", ["@ember/templ
         "isStrictMode": false
       }));
       assert.dom(this.element).hasText('template block text');
-    });
-  });
-});
-define("algolizer/tests/integration/modifiers/drag-manager-test", ["@ember/template-factory", "qunit", "ember-qunit", "@ember/test-helpers"], function (_templateFactory, _qunit, _emberQunit, _testHelpers) {
-  "use strict";
-
-  (0, _qunit.module)('Integration | Modifier | drag-manager', function (hooks) {
-    (0, _emberQunit.setupRenderingTest)(hooks); // Replace this with your real tests.
-
-    (0, _qunit.test)('it renders', async function (assert) {
-      await (0, _testHelpers.render)((0, _templateFactory.createTemplateFactory)(
-      /*
-        <div {{drag-manager}}></div>
-      */
-      {
-        "id": "nacUvdeY",
-        "block": "[[[11,0],[4,[38,0],null,null],[12],[13]],[],false,[\"drag-manager\"]]",
-        "moduleName": "(unknown template module)",
-        "isStrictMode": false
-      }));
-      assert.ok(true);
     });
   });
 });

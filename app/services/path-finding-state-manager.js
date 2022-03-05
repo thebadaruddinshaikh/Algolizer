@@ -3,8 +3,10 @@ import { tracked } from '@glimmer/tracking';
 export default class PathFindingStateManagerService extends Service {
   @tracked dragging = false;
   @tracked underProgramControl = false;
+
   source = [9, 9];
   destination = [29, 9];
+
   startDragging() {
     this.dragging = true;
   }

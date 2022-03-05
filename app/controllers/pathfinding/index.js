@@ -4,12 +4,17 @@ import { tracked } from '@glimmer/tracking';
 import { inject as service } from '@ember/service';
 
 export default class PathfindingIndexController extends Controller {
-  @service('path-finding-state-manager') dragState;
+  @service('path-finding-state-manager') stateManager;
 
   @tracked grid = this.model;
-
   @tracked selectedAlgo = 'No Selection';
-  @tracked selectedSpeed = 'No Selection';
+  @tracked selectedSpeed = 'Medium';
+
+  delayMap = {
+    Slow: 250,
+    Medium: 100,
+    Fast: 50,
+  };
 
   @action
   onChangeHandler(pos, wall, visited) {
@@ -17,26 +22,38 @@ export default class PathfindingIndexController extends Controller {
   }
 
   @action
+  enableDragging() {
+    this.stateManager.startDragging();
+  }
+
+  @action
+  disableDragging() {
+    this.stateManager.stopDragging();
+  }
+
+  @action
   async visualize() {
-    this.dragState.underProgramControl = true;
+    this.stateManager.underProgramControl = true;
 
     if (this.selectedAlgo == 'DFS') {
       let stack = [];
-      stack.push(this.dragState.source);
-      await this.depthFirstSearch(stack);
+      stack.push(this.stateManager.source);
+      await this.depthFirstSearch(stack, this.delayMap[this.selectedSpeed]);
     } else if (this.selectedAlgo == 'BFS') {
       let queue = [];
-      queue.push(this.dragState.source);
-      await this.breadthFirstSearch(queue);
+      queue.push(this.stateManager.source);
+      await this.breadthFirstSearch(queue, this.delayMap[this.selectedSpeed]);
     }
-
-    this.dragState.underProgramControl = false;
+    this.stateManager.underProgramControl = false;
   }
 
-  @action updateSelectedAlgorithm(option) {
+  @action
+  updateSelectedAlgorithm(option) {
     this.selectedAlgo = option;
   }
-  @action updateSelectedSpeed(option) {
+
+  @action
+  updateSelectedSpeed(option) {
     this.selectedSpeed = option;
   }
 
@@ -83,7 +100,7 @@ export default class PathfindingIndexController extends Controller {
     this.grid[y][x].isVisited = isVisited;
   }
 
-  async depthFirstSearch(stack) {
+  async depthFirstSearch(stack, speed) {
     let dy = [-1, 0, 1, 0];
     let dx = [0, 1, 0, -1];
 
@@ -95,7 +112,7 @@ export default class PathfindingIndexController extends Controller {
       }
       this.updateWithRebuild(box[0], box[1], false, true);
 
-      if (this.dragState.isDestination(box)) {
+      if (this.stateManager.isDestination(box)) {
         break;
       }
 
@@ -116,10 +133,10 @@ export default class PathfindingIndexController extends Controller {
           stack.push([x, y]);
         }
       }
-      await new Promise((r) => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, speed));
     }
   }
-  async breadthFirstSearch(queue) {
+  async breadthFirstSearch(queue, speed) {
     let dy = [-1, 0, 1, 0];
     let dx = [0, 1, 0, -1];
 
@@ -132,7 +149,7 @@ export default class PathfindingIndexController extends Controller {
 
       this.updateWithRebuild(box[0], box[1], false, true);
 
-      if (this.dragState.isDestination(box)) {
+      if (this.stateManager.isDestination(box)) {
         break;
       }
 
@@ -153,7 +170,7 @@ export default class PathfindingIndexController extends Controller {
           queue.push([x, y]);
         }
       }
-      await new Promise((r) => setTimeout(r, 5));
+      await new Promise((r) => setTimeout(r, speed));
     }
   }
 }

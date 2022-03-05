@@ -4,9 +4,11 @@ export default class PathfindingIndexRoute extends Route {
   grid = [];
 
   beforeModel() {
+    console.log('');
     this.grid = [];
     this.grid = [...this.grid];
   }
+
   model() {
     for (let y = 0; y < 20; y++) {
       let tempArr = [];

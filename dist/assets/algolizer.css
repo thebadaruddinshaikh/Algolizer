@@ -39,6 +39,14 @@
   cursor: pointer;
 }
 
+.source {
+  margin: 0px;
+  padding: 0px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 23px;
+}
+
 .visited {
   animation: touched 0.6s ease-out forwards;
   animation-iteration-count: 1;
@@ -77,37 +85,6 @@
     border-color: #0acfcf;
   }
 }
-nav {
-  background-color: #3b3b3b;
-  height: 60px;
-  display: flex;
-  justify-content: flex-start;
-  color: white;
-  margin: 0px;
-  padding: 10px 30px;
-}
-
-.nav-bar-primary {
-  align-self: flex-start;
-  list-style-type: none;
-  border: 1px solid white;
-}
-
-.nav-bar-item {
-  float: left;
-  padding: 10px 30px;
-  background-color: #1d1d1d;
-}
-
-.nav-bar-item:hover {
-  border-bottom: 2px solid white;
-}
-
-.navbar-title {
-  margin: 0px;
-  padding: 10px 0px;
-}
-
 .grid-container {
   margin-top: 30px;
 }
@@ -118,11 +95,89 @@ nav {
   border: 1px solid black;
 }
 
+.placed {
+  background-color: green;
+}
+
 .bar-container {
   display: flex;
   justify-content: center;
   margin: 0px 80px;
   border: 2px solid black;
+}
+
+nav {
+  background-color: #3b3b3b;
+  display: flex;
+  align-items: center;
+  color: white;
+  margin: 0px;
+  padding: 0px;
+}
+
+.nav-bar-headers {
+  display: flex;
+  margin: 0px;
+  padding: 20px;
+}
+
+.nav-bar-headers h1 {
+  padding: 0px;
+  margin: 0px;
+}
+
+.nav-bar-headers sub {
+  font-weight: lighter;
+  font-size: 15px;
+  margin: 0px;
+}
+
+.nav-bar-item {
+  padding: 0px 30px;
+  border: 2px solid transparent;
+  background-color: #3b3b3b;
+  position: relative;
+}
+
+.nav-bar-item h4 {
+  margin: 0px;
+  padding: 25px;
+  padding-bottom: 5px;
+  font-weight: lighter;
+  cursor: pointer;
+}
+
+.nav-bar-item:hover {
+  border-bottom: 2px solid white;
+}
+
+.drop-down-list {
+  margin: 0px;
+  padding: 0px;
+  z-index: 1;
+  position: absolute;
+  background-color: #3b3b3b;
+  transition: 0.5s;
+  top: -200px;
+  width: 230px;
+}
+
+.drop-down-item {
+  margin: 0px;
+  padding: 10px;
+}
+
+.drop-down-item:hover {
+  background-color: #1d1d1d;
+  cursor: pointer;
+}
+
+.selected-option {
+  margin: 0px;
+  padding: 0px;
+  padding-bottom: 5px;
+  font-size: 15px;
+  text-align: center;
 }
 
 /*# sourceMappingURL=algolizer.css.map */
