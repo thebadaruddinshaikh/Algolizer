@@ -59,32 +59,37 @@ export default class PathfindingIndexController extends Controller {
 
   @action
   clearBoard() {
-    for (let y = 0; y < this.grid.length; y++) {
-      for (let x = 0; x < this.grid[0].length; x++) {
-        if (this.grid[y][x].isWall) {
-          this.grid[y][x] = {
-            isWall: false,
-            isVisited: false,
-          };
+    if (!this.stateManager.underProgramControl) {
+      for (let y = 0; y < this.grid.length; y++) {
+        for (let x = 0; x < this.grid[0].length; x++) {
+          if (this.grid[y][x].isWall) {
+            this.grid[y][x] = {
+              isWall: false,
+              isVisited: false,
+            };
+          }
         }
       }
+      this.clearPath();
     }
-    this.clearPath();
   }
 
   @action
   clearPath() {
-    for (let y = 0; y < this.grid.length; y++) {
-      for (let x = 0; x < this.grid[0].length; x++) {
-        if (this.grid[y][x].isVisited) {
-          this.grid[y][x] = {
-            isWall: false,
-            isVisited: false,
-          };
+    if (!this.stateManager.underProgramControl) {
+      for (let y = 0; y < this.grid.length; y++) {
+        for (let x = 0; x < this.grid[0].length; x++) {
+          if (this.grid[y][x].isVisited) {
+            this.grid[y][x] = {
+              isWall: false,
+              isVisited: false,
+            };
+            // this.updateWithoutRebuild(x, y, false, false);
+          }
         }
       }
+      this.grid = [...this.grid];
     }
-    this.grid = [...this.grid];
   }
 
   async updateWithRebuild(x, y, isWall, isVisited) {

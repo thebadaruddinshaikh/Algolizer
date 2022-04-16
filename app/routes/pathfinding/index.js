@@ -1,15 +1,10 @@
 import Route from '@ember/routing/route';
 
 export default class PathfindingIndexRoute extends Route {
-  grid = [];
-
-  beforeModel() {
-    console.log('');
-    this.grid = [];
-    this.grid = [...this.grid];
-  }
+  modelGrid = [];
 
   model() {
+    console.log('In the model');
     for (let y = 0; y < 20; y++) {
       let tempArr = [];
       for (let x = 0; x < 40; x++) {
@@ -18,9 +13,8 @@ export default class PathfindingIndexRoute extends Route {
           isVisited: false,
         });
       }
-      this.grid[y] = tempArr;
+      this.modelGrid[y] = tempArr;
     }
-
-    return this.grid;
+    return [...this.modelGrid];
   }
 }

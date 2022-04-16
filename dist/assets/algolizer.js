@@ -418,33 +418,37 @@
     }
 
     clearBoard() {
-      for (let y = 0; y < this.grid.length; y++) {
-        for (let x = 0; x < this.grid[0].length; x++) {
-          if (this.grid[y][x].isWall) {
-            this.grid[y][x] = {
-              isWall: false,
-              isVisited: false
-            };
+      if (!this.stateManager.underProgramControl) {
+        for (let y = 0; y < this.grid.length; y++) {
+          for (let x = 0; x < this.grid[0].length; x++) {
+            if (this.grid[y][x].isWall) {
+              this.grid[y][x] = {
+                isWall: false,
+                isVisited: false
+              };
+            }
           }
         }
-      }
 
-      this.clearPath();
+        this.clearPath();
+      }
     }
 
     clearPath() {
-      for (let y = 0; y < this.grid.length; y++) {
-        for (let x = 0; x < this.grid[0].length; x++) {
-          if (this.grid[y][x].isVisited) {
-            this.grid[y][x] = {
-              isWall: false,
-              isVisited: false
-            };
+      if (!this.stateManager.underProgramControl) {
+        for (let y = 0; y < this.grid.length; y++) {
+          for (let x = 0; x < this.grid[0].length; x++) {
+            if (this.grid[y][x].isVisited) {
+              this.grid[y][x] = {
+                isWall: false,
+                isVisited: false
+              }; // this.updateWithoutRebuild(x, y, false, false);
+            }
           }
         }
-      }
 
-      this.grid = [...this.grid];
+        this.grid = [...this.grid];
+      }
     }
 
     async updateWithRebuild(x, y, isWall, isVisited) {
@@ -972,16 +976,12 @@
     constructor() {
       super(...arguments);
 
-      _defineProperty(this, "grid", []);
-    }
-
-    beforeModel() {
-      console.log('');
-      this.grid = [];
-      this.grid = [...this.grid];
+      _defineProperty(this, "modelGrid", []);
     }
 
     model() {
+      console.log('In the model');
+
       for (let y = 0; y < 20; y++) {
         let tempArr = [];
 
@@ -992,10 +992,10 @@
           });
         }
 
-        this.grid[y] = tempArr;
+        this.modelGrid[y] = tempArr;
       }
 
-      return this.grid;
+      return [...this.modelGrid];
     }
 
   }
@@ -1319,7 +1319,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+50b8075b"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+60d05241"});
           }
         
 //# sourceMappingURL=algolizer.map
