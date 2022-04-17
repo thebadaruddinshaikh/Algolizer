@@ -28,7 +28,7 @@ export default class PathfindingIndexController extends Controller {
 
   @action
   disableDragging() {
-    this.stateManager.stopDragging();
+    this.stateManager.reset();
   }
 
   @action

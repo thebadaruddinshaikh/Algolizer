@@ -76,19 +76,19 @@
   /*
     <div
     class='box {{this.getClasses}}'
-    {{on 'click' this.clickHandler}}
+    {{on 'mousedown' this.mouseDownHandler}}
     {{on 'mouseenter' this.dragHandler}}
   >
     {{#if this.isSource}}
       <p class='source'>></p>
     {{else if this.isDestination}}
-      D
+      <p class='source'>O</p>
     {{/if}}
   </div>
   */
   {
-    "id": "jfNDqQyc",
-    "block": "[[[11,0],[16,0,[29,[\"box \",[30,0,[\"getClasses\"]]]]],[4,[38,0],[\"click\",[30,0,[\"clickHandler\"]]],null],[4,[38,0],[\"mouseenter\",[30,0,[\"dragHandler\"]]],null],[12],[1,\"\\n\"],[41,[30,0,[\"isSource\"]],[[[1,\"    \"],[10,2],[14,0,\"source\"],[12],[1,\">\"],[13],[1,\"\\n\"]],[]],[[[41,[30,0,[\"isDestination\"]],[[[1,\"    D\\n  \"]],[]],null]],[]]],[13]],[],false,[\"on\",\"if\"]]",
+    "id": "U1Ut8Kdr",
+    "block": "[[[11,0],[16,0,[29,[\"box \",[30,0,[\"getClasses\"]]]]],[4,[38,0],[\"mousedown\",[30,0,[\"mouseDownHandler\"]]],null],[4,[38,0],[\"mouseenter\",[30,0,[\"dragHandler\"]]],null],[12],[1,\"\\n\"],[41,[30,0,[\"isSource\"]],[[[1,\"    \"],[10,2],[14,0,\"source\"],[12],[1,\">\"],[13],[1,\"\\n\"]],[]],[[[41,[30,0,[\"isDestination\"]],[[[1,\"    \"],[10,2],[14,0,\"source\"],[12],[1,\"O\"],[13],[1,\"\\n  \"]],[]],null]],[]]],[13]],[],false,[\"on\",\"if\"]]",
     "moduleName": "algolizer/components/pathfinding/box.hbs",
     "isStrictMode": false
   });
@@ -102,10 +102,14 @@
       _initializerDefineProperty(this, "isWall", _descriptor2, this);
 
       _initializerDefineProperty(this, "isVisited", _descriptor3, this);
+    }
 
-      _defineProperty(this, "isSource", this.stateManager.isSource(this.args.arrPos));
+    get isSource() {
+      return this.stateManager.isSource(this.args.arrPos);
+    }
 
-      _defineProperty(this, "isDestination", this.stateManager.isDestination(this.args.arrPos));
+    get isDestination() {
+      return this.stateManager.isDestination(this.args.arrPos);
     }
 
     get getClasses() {
@@ -116,7 +120,13 @@
       }
     }
 
-    clickHandler() {
+    mouseDownHandler() {
+      if (this.isSource) {
+        this.stateManager.sourceMove = true;
+      } else if (this.isDestination) {
+        this.stateManager.destinationMove = true;
+      }
+
       this.interactionHandler();
     }
 
@@ -127,7 +137,11 @@
     }
 
     interactionHandler() {
-      if (!this.isSource && !this.isDestination && !this.stateManager.underProgramControl) {
+      if (this.stateManager.sourceMove) {
+        this.stateManager.setSource(this.args.arrPos);
+      } else if (this.stateManager.destinationMove) {
+        this.stateManager.setDestination(this.args.arrPos);
+      } else if (!this.isSource && !this.isDestination && !this.stateManager.underProgramControl) {
         this.isWall = !this.isWall;
         this.isVisited = false;
         this.args.onChange(this.args.arrPos, this.isWall, false);
@@ -153,7 +167,7 @@
     initializer: function () {
       return this.args.isVisited;
     }
-  }), _applyDecoratedDescriptor(_class.prototype, "clickHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "clickHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "dragHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "dragHandler"), _class.prototype)), _class));
+  }), _applyDecoratedDescriptor(_class.prototype, "mouseDownHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "mouseDownHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "dragHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "dragHandler"), _class.prototype)), _class));
   _exports.default = PathfindingBoxComponent;
   (0, _component.setComponentTemplate)(__COLOCATED_TEMPLATE__, PathfindingBoxComponent);
 });
@@ -204,14 +218,14 @@
           class='drop-down-item'
           {{on 'click' (fn this.onSelectAlgorithm 'DFS')}}
         >DFS (Depth-first Search)</p>
-        {{!-- <p
+        <p
           class='drop-down-item'
           {{on 'click' (fn this.onSelectAlgorithm 'Dijkstras')}}
         >Dijkstras</p>
         <p
           class='drop-down-item'
           {{on 'click' (fn this.onSelectAlgorithm 'A*')}}
-        >A*</p> --}}
+        >A*</p>
       </div>
     </div>
   
@@ -221,7 +235,7 @@
       {{on 'mouseleave' this.hideDropDown}}
       id='speed'
     >
-      <h4>Set Speed</h4>
+      <h4>Speed</h4>
       <p class='selected-option'>
         {{@speed}}
       </p>
@@ -252,8 +266,8 @@
   </nav>
   */
   {
-    "id": "z0Mk4VTn",
-    "block": "[[[10,\"nav\"],[12],[1,\"\\n  \"],[10,0],[14,0,\"nav-bar-headers\"],[12],[1,\"\\n    \"],[10,\"h1\"],[12],[1,\"\\n      Algolizer\\n      \"],[10,\"sub\"],[12],[1,\"Path-finding\"],[13],[1,\"\\n    \"],[13],[1,\"\\n\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"algo\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,1]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list algo-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"BFS\"],null]],null],[12],[1,\"BFS (Breadth-first Search)\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"DFS\"],null]],null],[12],[1,\"DFS (Depth-first Search)\"],[13],[1,\"\\n\"],[1,\"    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"speed\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Set Speed\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,2]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list speed-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Fast\"],null]],null],[12],[1,\"Fast\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Medium\"],null]],null],[12],[1,\"Medium\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Slow\"],null]],null],[12],[1,\"Slow\"],[13],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,3]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Visualize\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,4]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,5]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Board\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13]],[\"@algo\",\"@speed\",\"@visualize\",\"@clearPath\",\"@clearBoard\"],false,[\"on\",\"fn\"]]",
+    "id": "99d6F6qN",
+    "block": "[[[10,\"nav\"],[12],[1,\"\\n  \"],[10,0],[14,0,\"nav-bar-headers\"],[12],[1,\"\\n    \"],[10,\"h1\"],[12],[1,\"\\n      Algolizer\\n      \"],[10,\"sub\"],[12],[1,\"Path-finding\"],[13],[1,\"\\n    \"],[13],[1,\"\\n\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"algo\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,1]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list algo-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"BFS\"],null]],null],[12],[1,\"BFS (Breadth-first Search)\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"DFS\"],null]],null],[12],[1,\"DFS (Depth-first Search)\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"Dijkstras\"],null]],null],[12],[1,\"Dijkstras\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"A*\"],null]],null],[12],[1,\"A*\"],[13],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"speed\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Speed\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,2]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list speed-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Fast\"],null]],null],[12],[1,\"Fast\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Medium\"],null]],null],[12],[1,\"Medium\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Slow\"],null]],null],[12],[1,\"Slow\"],[13],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,3]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Visualize\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,4]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,5]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Board\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13]],[\"@algo\",\"@speed\",\"@visualize\",\"@clearPath\",\"@clearBoard\"],false,[\"on\",\"fn\"]]",
     "moduleName": "algolizer/components/pathfinding/navbar.hbs",
     "isStrictMode": false
   });
@@ -390,7 +404,7 @@
     }
 
     disableDragging() {
-      this.stateManager.stopDragging();
+      this.stateManager.reset();
     }
 
     async visualize() {
@@ -1087,7 +1101,7 @@
   });
   _exports.default = void 0;
 
-  var _class, _descriptor, _descriptor2;
+  var _class, _descriptor, _descriptor2, _descriptor3, _descriptor4, _descriptor5, _descriptor6;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -1105,17 +1119,23 @@
 
       _initializerDefineProperty(this, "underProgramControl", _descriptor2, this);
 
-      _defineProperty(this, "source", [9, 9]);
+      _initializerDefineProperty(this, "sourceMove", _descriptor3, this);
 
-      _defineProperty(this, "destination", [29, 9]);
+      _initializerDefineProperty(this, "destinationMove", _descriptor4, this);
+
+      _initializerDefineProperty(this, "source", _descriptor5, this);
+
+      _initializerDefineProperty(this, "destination", _descriptor6, this);
     }
 
     startDragging() {
       this.dragging = true;
     }
 
-    stopDragging() {
+    reset() {
       this.dragging = false;
+      this.sourceMove = false;
+      this.destinationMove = false;
     }
 
     isSource(arr) {
@@ -1134,6 +1154,14 @@
       return false;
     }
 
+    setSource(sourceArr) {
+      this.source = sourceArr;
+    }
+
+    setDestination(destinationArr) {
+      this.destination = destinationArr;
+    }
+
   }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "dragging", [_tracking.tracked], {
     configurable: true,
     enumerable: true,
@@ -1147,6 +1175,34 @@
     writable: true,
     initializer: function () {
       return false;
+    }
+  }), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "sourceMove", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return false;
+    }
+  }), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "destinationMove", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return false;
+    }
+  }), _descriptor5 = _applyDecoratedDescriptor(_class.prototype, "source", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return [9, 9];
+    }
+  }), _descriptor6 = _applyDecoratedDescriptor(_class.prototype, "destination", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return [29, 9];
     }
   })), _class);
   _exports.default = PathFindingStateManagerService;
@@ -1219,8 +1275,8 @@
   _exports.default = void 0;
 
   var _default = (0, _templateFactory.createTemplateFactory)({
-    "id": "DRQOPdaq",
-    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[8,[39,1],null,[[\"@visualize\",\"@clearBoard\",\"@clearPath\",\"@algo\",\"@speed\",\"@updateAlgo\",\"@updateSpeed\",\"@visualize\"],[[30,0,[\"visualize\"]],[30,0,[\"clearBoard\"]],[30,0,[\"clearPath\"]],[30,0,[\"selectedAlgo\"]],[30,0,[\"selectedSpeed\"]],[30,0,[\"updateSelectedAlgorithm\"]],[30,0,[\"updateSelectedSpeed\"]],[30,0,[\"visualize\"]]]],null],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container grid-container\"],[4,[38,2],[\"mousedown\",[30,0,[\"enableDragging\"]]],null],[4,[38,2],[\"mouseup\",[30,0,[\"disableDragging\"]]],null],[12],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"pathfinding/navbar\",\"on\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
+    "id": "VVSFGclB",
+    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[8,[39,1],null,[[\"@visualize\",\"@clearBoard\",\"@clearPath\",\"@algo\",\"@speed\",\"@updateAlgo\",\"@updateSpeed\"],[[30,0,[\"visualize\"]],[30,0,[\"clearBoard\"]],[30,0,[\"clearPath\"]],[30,0,[\"selectedAlgo\"]],[30,0,[\"selectedSpeed\"]],[30,0,[\"updateSelectedAlgorithm\"]],[30,0,[\"updateSelectedSpeed\"]]]],null],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container grid-container\"],[4,[38,2],[\"mousedown\",[30,0,[\"enableDragging\"]]],null],[4,[38,2],[\"mouseup\",[30,0,[\"disableDragging\"]]],null],[12],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"pathfinding/navbar\",\"on\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
     "moduleName": "algolizer/templates/pathfinding/index.hbs",
     "isStrictMode": false
   });
@@ -1319,7 +1375,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+60d05241"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+f2c19e8f"});
           }
         
 //# sourceMappingURL=algolizer.map

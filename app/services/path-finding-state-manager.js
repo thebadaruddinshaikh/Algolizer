@@ -3,16 +3,20 @@ import { tracked } from '@glimmer/tracking';
 export default class PathFindingStateManagerService extends Service {
   @tracked dragging = false;
   @tracked underProgramControl = false;
+  @tracked sourceMove = false;
+  @tracked destinationMove = false;
 
-  source = [9, 9];
-  destination = [29, 9];
+  @tracked source = [9, 9];
+  @tracked destination = [29, 9];
 
   startDragging() {
     this.dragging = true;
   }
 
-  stopDragging() {
+  reset() {
     this.dragging = false;
+    this.sourceMove = false;
+    this.destinationMove = false;
   }
 
   isSource(arr) {
@@ -27,5 +31,13 @@ export default class PathFindingStateManagerService extends Service {
       return true;
     }
     return false;
+  }
+
+  setSource(sourceArr) {
+    this.source = sourceArr;
+  }
+
+  setDestination(destinationArr) {
+    this.destination = destinationArr;
   }
 }

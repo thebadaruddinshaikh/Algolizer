@@ -25,14 +25,14 @@
         class='drop-down-item'
         {{on 'click' (fn this.onSelectAlgorithm 'DFS')}}
       >DFS (Depth-first Search)</p>
-      {{!-- <p
+      <p
         class='drop-down-item'
         {{on 'click' (fn this.onSelectAlgorithm 'Dijkstras')}}
       >Dijkstras</p>
       <p
         class='drop-down-item'
         {{on 'click' (fn this.onSelectAlgorithm 'A*')}}
-      >A*</p> --}}
+      >A*</p>
     </div>
   </div>
 
@@ -42,7 +42,7 @@
     {{on 'mouseleave' this.hideDropDown}}
     id='speed'
   >
-    <h4>Set Speed</h4>
+    <h4>Speed</h4>
     <p class='selected-option'>
       {{@speed}}
     </p>

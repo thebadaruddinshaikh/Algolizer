@@ -9,8 +9,13 @@ export default class PathfindingBoxComponent extends Component {
   @tracked isWall = this.args.isWall;
   @tracked isVisited = this.args.isVisited;
 
-  isSource = this.stateManager.isSource(this.args.arrPos);
-  isDestination = this.stateManager.isDestination(this.args.arrPos);
+  get isSource() {
+    return this.stateManager.isSource(this.args.arrPos);
+  }
+
+  get isDestination() {
+    return this.stateManager.isDestination(this.args.arrPos);
+  }
 
   get getClasses() {
     if (this.isWall) {
@@ -21,7 +26,12 @@ export default class PathfindingBoxComponent extends Component {
   }
 
   @action
-  clickHandler() {
+  mouseDownHandler() {
+    if (this.isSource) {
+      this.stateManager.sourceMove = true;
+    } else if (this.isDestination) {
+      this.stateManager.destinationMove = true;
+    }
     this.interactionHandler();
   }
 
@@ -33,7 +43,11 @@ export default class PathfindingBoxComponent extends Component {
   }
 
   interactionHandler() {
-    if (
+    if (this.stateManager.sourceMove) {
+      this.stateManager.setSource(this.args.arrPos);
+    } else if (this.stateManager.destinationMove) {
+      this.stateManager.setDestination(this.args.arrPos);
+    } else if (
       !this.isSource &&
       !this.isDestination &&
       !this.stateManager.underProgramControl

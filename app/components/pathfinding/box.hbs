@@ -1,11 +1,11 @@
 <div
   class='box {{this.getClasses}}'
-  {{on 'click' this.clickHandler}}
+  {{on 'mousedown' this.mouseDownHandler}}
   {{on 'mouseenter' this.dragHandler}}
 >
   {{#if this.isSource}}
     <p class='source'>></p>
   {{else if this.isDestination}}
-    D
+    <p class='source'>O</p>
   {{/if}}
 </div>
