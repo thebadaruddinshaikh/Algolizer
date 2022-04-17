@@ -137,10 +137,12 @@
     }
 
     interactionHandler() {
-      if (this.stateManager.sourceMove) {
-        this.stateManager.setSource(this.args.arrPos);
-      } else if (this.stateManager.destinationMove) {
-        this.stateManager.setDestination(this.args.arrPos);
+      if (this.stateManager.sourceMove || this.stateManager.destinationMove) {
+        if (this.stateManager.sourceMove && !this.isWall) {
+          this.stateManager.setSource(this.args.arrPos);
+        } else if (this.stateManager.destinationMove && !this.isWall) {
+          this.stateManager.setDestination(this.args.arrPos);
+        }
       } else if (!this.isSource && !this.isDestination && !this.stateManager.underProgramControl) {
         this.isWall = !this.isWall;
         this.isVisited = false;
