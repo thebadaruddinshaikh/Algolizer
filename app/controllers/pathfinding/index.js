@@ -142,6 +142,9 @@ export default class PathfindingIndexController extends Controller {
     }
   }
   async breadthFirstSearch(queue, speed) {
+    let prevNodeList = new Array(this.grid.length).fill(
+      new Array(this.grid[0].length).fill(null)
+    );
     let dy = [-1, 0, 1, 0];
     let dx = [0, 1, 0, -1];
 
@@ -171,11 +174,35 @@ export default class PathfindingIndexController extends Controller {
           continue;
         }
         //else put in queue
-        else {
+        if (!this.grid[y][x].isVisited) {
+          prevNodeList[y][x] = box;
           queue.push([x, y]);
         }
       }
       await new Promise((r) => setTimeout(r, speed));
     }
+    // await this.buildPath(prevNodeList, this.stateManager.destination);
   }
+
+  async buildPath(prevNodeList, destination) {
+    let pathArray = [];
+    let box = destination;
+    while (!this.stateManager.isSource(box)) {
+      console.log(box);
+      let prevNode = prevNodeList[box[1]][box[0]];
+      pathArray.push(prevNode);
+      box = prevNode;
+      await new Promise((r) => setTimeout(r, speed));
+    }
+    console.log(pathArray);
+  }
+
+  // getPositionfromIndex(num) {
+  //   let x = num % this.grid[0].length;
+  //   let y = num - x;
+  //   return [x, y];
+  // }
+  // getIndexFromPosition(arr) {
+  //   return arr[0] + arr[1];
+  // }
 }
