@@ -10,6 +10,20 @@
   @updateSpeed={{this.updateSelectedSpeed}}
 />
 
+<div style='text-align: center;'>
+  <p>You can
+    <b>Drag</b>
+    on the grid to draw walls, You can also Drag Source and Destination anywhere
+    on the grid</p>
+  <p><span class='source'>></span>
+    : Source
+    <span> </span>
+    <span class='source'>O</span>
+    : Destination
+  </p>
+  <p></p>
+</div>
+
 <div
   class='center-container grid-container'
   {{on 'mousedown' this.enableDragging}}
