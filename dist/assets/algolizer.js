@@ -222,14 +222,14 @@
           class='drop-down-item'
           {{on 'click' (fn this.onSelectAlgorithm 'DFS')}}
         >DFS (Depth-first Search)</p>
-        <p
+        {{!-- <p
           class='drop-down-item'
           {{on 'click' (fn this.onSelectAlgorithm 'Dijkstras')}}
         >Dijkstras</p>
         <p
           class='drop-down-item'
           {{on 'click' (fn this.onSelectAlgorithm 'A*')}}
-        >A*</p>
+        >A*</p> --}}
       </div>
     </div>
   
@@ -270,8 +270,8 @@
   </nav>
   */
   {
-    "id": "99d6F6qN",
-    "block": "[[[10,\"nav\"],[12],[1,\"\\n  \"],[10,0],[14,0,\"nav-bar-headers\"],[12],[1,\"\\n    \"],[10,\"h1\"],[12],[1,\"\\n      Algolizer\\n      \"],[10,\"sub\"],[12],[1,\"Path-finding\"],[13],[1,\"\\n    \"],[13],[1,\"\\n\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"algo\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,1]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list algo-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"BFS\"],null]],null],[12],[1,\"BFS (Breadth-first Search)\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"DFS\"],null]],null],[12],[1,\"DFS (Depth-first Search)\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"Dijkstras\"],null]],null],[12],[1,\"Dijkstras\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"A*\"],null]],null],[12],[1,\"A*\"],[13],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"speed\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Speed\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,2]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list speed-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Fast\"],null]],null],[12],[1,\"Fast\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Medium\"],null]],null],[12],[1,\"Medium\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Slow\"],null]],null],[12],[1,\"Slow\"],[13],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,3]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Visualize\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,4]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,5]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Board\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13]],[\"@algo\",\"@speed\",\"@visualize\",\"@clearPath\",\"@clearBoard\"],false,[\"on\",\"fn\"]]",
+    "id": "cD1wyQTR",
+    "block": "[[[10,\"nav\"],[12],[1,\"\\n  \"],[10,0],[14,0,\"nav-bar-headers\"],[12],[1,\"\\n    \"],[10,\"h1\"],[12],[1,\"\\n      Algolizer\\n      \"],[10,\"sub\"],[12],[1,\"Path-finding\"],[13],[1,\"\\n    \"],[13],[1,\"\\n\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"algo\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Algorithms\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,1]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list algo-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"BFS\"],null]],null],[12],[1,\"BFS (Breadth-first Search)\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectAlgorithm\"]],\"DFS\"],null]],null],[12],[1,\"DFS (Depth-first Search)\"],[13],[1,\"\\n\"],[1,\"    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[24,1,\"speed\"],[4,[38,0],[\"mouseenter\",[30,0,[\"showDropDown\"]]],null],[4,[38,0],[\"mouseleave\",[30,0,[\"hideDropDown\"]]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Speed\"],[13],[1,\"\\n    \"],[10,2],[14,0,\"selected-option\"],[12],[1,\"\\n      \"],[1,[30,2]],[1,\"\\n    \"],[13],[1,\"\\n    \"],[10,0],[14,0,\"drop-down-list speed-drop-down\"],[12],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Fast\"],null]],null],[12],[1,\"Fast\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Medium\"],null]],null],[12],[1,\"Medium\"],[13],[1,\"\\n      \"],[11,2],[24,0,\"drop-down-item\"],[4,[38,0],[\"click\",[28,[37,1],[[30,0,[\"onSelectSpeed\"]],\"Slow\"],null]],null],[12],[1,\"Slow\"],[13],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,3]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Visualize\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,4]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Path\"],[13],[1,\"\\n  \"],[13],[1,\"\\n  \"],[11,0],[24,0,\"nav-bar-item\"],[4,[38,0],[\"click\",[30,5]],null],[12],[1,\"\\n    \"],[10,\"h4\"],[12],[1,\"Clear Board\"],[13],[1,\"\\n  \"],[13],[1,\"\\n\"],[13]],[\"@algo\",\"@speed\",\"@visualize\",\"@clearPath\",\"@clearBoard\"],false,[\"on\",\"fn\"]]",
     "moduleName": "algolizer/components/pathfinding/navbar.hbs",
     "isStrictMode": false
   });
@@ -1407,7 +1407,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+d72985c9"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+40231365"});
           }
         
 //# sourceMappingURL=algolizer.map
