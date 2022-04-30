@@ -11,6 +11,7 @@ export default class PathfindingIndexRoute extends Route {
         tempArr.push({
           isWall: false,
           isVisited: false,
+          isPath: false,
         });
       }
       this.modelGrid[y] = tempArr;

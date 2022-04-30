@@ -76,7 +76,7 @@
 }
 @keyframes pathAnimation {
   0% {
-    transform: scale(0.5);
+    background-color: yellow;
   }
   50% {
     transform: scale(1.2);

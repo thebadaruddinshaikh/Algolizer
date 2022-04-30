@@ -62,7 +62,7 @@
   });
   _exports.default = void 0;
 
-  var _dec, _class, _descriptor, _descriptor2, _descriptor3;
+  var _dec, _class, _descriptor, _descriptor2, _descriptor3, _descriptor4;
 
   function _initializerDefineProperty(target, property, descriptor, context) { if (!descriptor) return; Object.defineProperty(target, property, { enumerable: descriptor.enumerable, configurable: descriptor.configurable, writable: descriptor.writable, value: descriptor.initializer ? descriptor.initializer.call(context) : void 0 }); }
 
@@ -102,6 +102,8 @@
       _initializerDefineProperty(this, "isWall", _descriptor2, this);
 
       _initializerDefineProperty(this, "isVisited", _descriptor3, this);
+
+      _initializerDefineProperty(this, "isPath", _descriptor4, this);
     }
 
     get isSource() {
@@ -115,6 +117,8 @@
     get getClasses() {
       if (this.isWall) {
         return 'wall';
+      } else if (this.isPath) {
+        return 'path';
       } else if (this.isVisited) {
         return 'visited';
       }
@@ -170,6 +174,13 @@
     writable: true,
     initializer: function () {
       return this.args.isVisited;
+    }
+  }), _descriptor4 = _applyDecoratedDescriptor(_class.prototype, "isPath", [_tracking.tracked], {
+    configurable: true,
+    enumerable: true,
+    writable: true,
+    initializer: function () {
+      return this.args.isPath;
     }
   }), _applyDecoratedDescriptor(_class.prototype, "mouseDownHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "mouseDownHandler"), _class.prototype), _applyDecoratedDescriptor(_class.prototype, "dragHandler", [_object.action], Object.getOwnPropertyDescriptor(_class.prototype, "dragHandler"), _class.prototype)), _class));
   _exports.default = PathfindingBoxComponent;
@@ -456,11 +467,12 @@
       if (!this.stateManager.underProgramControl) {
         for (let y = 0; y < this.grid.length; y++) {
           for (let x = 0; x < this.grid[0].length; x++) {
-            if (this.grid[y][x].isVisited) {
+            if (this.grid[y][x].isVisited || this.grid[y][x].isPath) {
               this.grid[y][x] = {
                 isWall: false,
-                isVisited: false
-              }; // this.updateWithoutRebuild(x, y, false, false);
+                isVisited: false,
+                isPath: false
+              };
             }
           }
         }
@@ -469,17 +481,19 @@
       }
     }
 
-    async updateWithRebuild(x, y, isWall, isVisited) {
+    async updateWithRebuild(x, y, isWall, isVisited, isPath) {
       this.grid[y][x] = {
         isWall: isWall,
-        isVisited: isVisited
+        isVisited: isVisited,
+        isPath: isPath
       };
       this.grid = [...this.grid];
     }
 
-    updateWithoutRebuild(x, y, isWall, isVisited) {
+    updateWithoutRebuild(x, y, isWall, isVisited, isPath) {
       this.grid[y][x].isWall = isWall;
       this.grid[y][x].isVisited = isVisited;
+      this.grid[y][x].isPath = isPath;
     }
 
     async depthFirstSearch(stack, speed) {
@@ -519,22 +533,25 @@
     }
 
     async breadthFirstSearch(queue, speed) {
-      let prevNodeList = new Array(this.grid.length).fill(new Array(this.grid[0].length).fill(null));
+      //building the PrevNodeList
+      let prevNodeList = [];
+
+      for (let y = 0; y < 20; y++) {
+        let tempArr = [];
+
+        for (let x = 0; x < 40; x++) {
+          tempArr.push([-1, -1]);
+        }
+
+        prevNodeList[y] = tempArr;
+      } //up, right, down, left
+
+
       let dy = [-1, 0, 1, 0];
       let dx = [0, 1, 0, -1];
 
       while (queue.length) {
         let box = queue.shift();
-
-        if (this.grid[box[1]][box[0]].isVisited) {
-          continue;
-        }
-
-        this.updateWithRebuild(box[0], box[1], false, true);
-
-        if (this.stateManager.isDestination(box)) {
-          break;
-        }
 
         for (let i = 0; i < 4; i++) {
           let x = box[0] + dx[i];
@@ -549,14 +566,18 @@
 
 
           if (!this.grid[y][x].isVisited) {
-            prevNodeList[y][x] = box;
+            prevNodeList[y][x] = [...box];
             queue.push([x, y]);
+            this.updateWithRebuild(x, y, false, true, false);
+            await new Promise(r => setTimeout(r, speed));
+          }
+
+          if (this.stateManager.isDestination([x, y])) {
+            await this.buildPath(prevNodeList, this.stateManager.destination);
+            return;
           }
         }
-
-        await new Promise(r => setTimeout(r, speed));
-      } // await this.buildPath(prevNodeList, this.stateManager.destination);
-
+      }
     }
 
     async buildPath(prevNodeList, destination) {
@@ -564,23 +585,15 @@
       let box = destination;
 
       while (!this.stateManager.isSource(box)) {
-        console.log(box);
+        this.updateWithRebuild(box[0], box[1], false, false, true);
         let prevNode = prevNodeList[box[1]][box[0]];
         pathArray.push(prevNode);
         box = prevNode;
-        await new Promise(r => setTimeout(r, speed));
+        await new Promise(r => setTimeout(r, 100));
       }
 
-      console.log(pathArray);
-    } // getPositionfromIndex(num) {
-    //   let x = num % this.grid[0].length;
-    //   let y = num - x;
-    //   return [x, y];
-    // }
-    // getIndexFromPosition(arr) {
-    //   return arr[0] + arr[1];
-    // }
-
+      this.updateWithRebuild(box[0], box[1], false, false, true);
+    }
 
   }, (_descriptor = _applyDecoratedDescriptor(_class.prototype, "stateManager", [_dec], {
     configurable: true,
@@ -1034,7 +1047,8 @@
         for (let x = 0; x < 40; x++) {
           tempArr.push({
             isWall: false,
-            isVisited: false
+            isVisited: false,
+            isPath: false
           });
         }
 
@@ -1307,8 +1321,8 @@
   _exports.default = void 0;
 
   var _default = (0, _templateFactory.createTemplateFactory)({
-    "id": "G359j4yW",
-    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[8,[39,1],null,[[\"@visualize\",\"@clearBoard\",\"@clearPath\",\"@algo\",\"@speed\",\"@updateAlgo\",\"@updateSpeed\"],[[30,0,[\"visualize\"]],[30,0,[\"clearBoard\"]],[30,0,[\"clearPath\"]],[30,0,[\"selectedAlgo\"]],[30,0,[\"selectedSpeed\"]],[30,0,[\"updateSelectedAlgorithm\"]],[30,0,[\"updateSelectedSpeed\"]]]],null],[1,\"\\n\\n\"],[10,0],[14,5,\"text-align: center;\"],[12],[1,\"\\n  \"],[10,2],[12],[1,\"You can\\n    \"],[10,\"b\"],[12],[1,\"Drag\"],[13],[1,\"\\n    on the grid to draw walls, You can also Drag Source and Destination anywhere\\n    on the grid\"],[13],[1,\"\\n  \"],[10,2],[12],[10,1],[14,0,\"source\"],[12],[1,\">\"],[13],[1,\"\\n    : Source\\n    \"],[10,1],[12],[1,\" \"],[13],[1,\"\\n    \"],[10,1],[14,0,\"source\"],[12],[1,\"O\"],[13],[1,\"\\n    : Destination\\n  \"],[13],[1,\"\\n  \"],[10,2],[12],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container grid-container\"],[4,[38,2],[\"mousedown\",[30,0,[\"enableDragging\"]]],null],[4,[38,2],[\"mouseup\",[30,0,[\"disableDragging\"]]],null],[12],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"pathfinding/navbar\",\"on\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
+    "id": "wYwtlJEQ",
+    "block": "[[[1,[28,[35,0],[\"Algolizer | Pathfinding\"],null]],[1,\"\\n\\n\"],[8,[39,1],null,[[\"@visualize\",\"@clearBoard\",\"@clearPath\",\"@algo\",\"@speed\",\"@updateAlgo\",\"@updateSpeed\"],[[30,0,[\"visualize\"]],[30,0,[\"clearBoard\"]],[30,0,[\"clearPath\"]],[30,0,[\"selectedAlgo\"]],[30,0,[\"selectedSpeed\"]],[30,0,[\"updateSelectedAlgorithm\"]],[30,0,[\"updateSelectedSpeed\"]]]],null],[1,\"\\n\\n\"],[10,0],[14,5,\"text-align: center;\"],[12],[1,\"\\n  \"],[10,2],[12],[1,\"You can\\n    \"],[10,\"b\"],[12],[1,\"Drag\"],[13],[1,\"\\n    on the grid to draw walls, You can also Drag Source and Destination anywhere\\n    on the grid\"],[13],[1,\"\\n  \"],[10,2],[12],[10,1],[14,0,\"source\"],[12],[1,\">\"],[13],[1,\"\\n    : Source\\n    \"],[10,1],[12],[1,\" \"],[13],[1,\"\\n    \"],[10,1],[14,0,\"source\"],[12],[1,\"O\"],[13],[1,\"\\n    : Destination\\n  \"],[13],[1,\"\\n  \"],[10,2],[12],[13],[1,\"\\n\"],[13],[1,\"\\n\\n\"],[11,0],[24,0,\"center-container grid-container\"],[4,[38,2],[\"mousedown\",[30,0,[\"enableDragging\"]]],null],[4,[38,2],[\"mouseup\",[30,0,[\"disableDragging\"]]],null],[12],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],0],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,1],\"isWall\"],null],[28,[37,5],[[30,1],\"isVisited\"],null],[28,[37,5],[[30,1],\"isPath\"],null],[28,[37,7],[[30,2],0],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[1,2]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],1],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,3],\"isWall\"],null],[28,[37,5],[[30,3],\"isVisited\"],null],[28,[37,5],[[30,3],\"isPath\"],null],[28,[37,7],[[30,4],1],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[3,4]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],2],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,5],\"isWall\"],null],[28,[37,5],[[30,5],\"isVisited\"],null],[28,[37,5],[[30,5],\"isPath\"],null],[28,[37,7],[[30,6],2],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[5,6]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],3],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,7],\"isWall\"],null],[28,[37,5],[[30,7],\"isVisited\"],null],[28,[37,5],[[30,7],\"isPath\"],null],[28,[37,7],[[30,8],3],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[7,8]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],4],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,9],\"isWall\"],null],[28,[37,5],[[30,9],\"isVisited\"],null],[28,[37,5],[[30,9],\"isPath\"],null],[28,[37,7],[[30,10],4],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[9,10]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],5],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,11],\"isWall\"],null],[28,[37,5],[[30,11],\"isVisited\"],null],[28,[37,5],[[30,11],\"isPath\"],null],[28,[37,7],[[30,12],5],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[11,12]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],6],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,13],\"isWall\"],null],[28,[37,5],[[30,13],\"isVisited\"],null],[28,[37,5],[[30,13],\"isPath\"],null],[28,[37,7],[[30,14],6],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[13,14]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],7],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,15],\"isWall\"],null],[28,[37,5],[[30,15],\"isVisited\"],null],[28,[37,5],[[30,15],\"isPath\"],null],[28,[37,7],[[30,16],7],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[15,16]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],8],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,17],\"isWall\"],null],[28,[37,5],[[30,17],\"isVisited\"],null],[28,[37,5],[[30,17],\"isPath\"],null],[28,[37,7],[[30,18],8],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[17,18]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],9],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,19],\"isWall\"],null],[28,[37,5],[[30,19],\"isVisited\"],null],[28,[37,5],[[30,19],\"isPath\"],null],[28,[37,7],[[30,20],9],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[19,20]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],10],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,21],\"isWall\"],null],[28,[37,5],[[30,21],\"isVisited\"],null],[28,[37,7],[[30,22],10],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[21,22]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],11],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,23],\"isWall\"],null],[28,[37,5],[[30,23],\"isVisited\"],null],[28,[37,5],[[30,23],\"isPath\"],null],[28,[37,7],[[30,24],11],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[23,24]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],12],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,25],\"isWall\"],null],[28,[37,5],[[30,25],\"isVisited\"],null],[28,[37,5],[[30,25],\"isPath\"],null],[28,[37,7],[[30,26],12],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[25,26]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],13],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,27],\"isWall\"],null],[28,[37,5],[[30,27],\"isVisited\"],null],[28,[37,5],[[30,27],\"isPath\"],null],[28,[37,7],[[30,28],13],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[27,28]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],14],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,29],\"isWall\"],null],[28,[37,5],[[30,29],\"isVisited\"],null],[28,[37,5],[[30,29],\"isPath\"],null],[28,[37,7],[[30,30],14],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[29,30]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],15],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,31],\"isWall\"],null],[28,[37,5],[[30,31],\"isVisited\"],null],[28,[37,7],[[30,32],15],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[31,32]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],16],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,33],\"isWall\"],null],[28,[37,5],[[30,33],\"isVisited\"],null],[28,[37,5],[[30,33],\"isPath\"],null],[28,[37,7],[[30,34],16],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[33,34]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],17],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,35],\"isWall\"],null],[28,[37,5],[[30,35],\"isVisited\"],null],[28,[37,5],[[30,35],\"isPath\"],null],[28,[37,7],[[30,36],17],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[35,36]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],18],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,37],\"isWall\"],null],[28,[37,5],[[30,37],\"isVisited\"],null],[28,[37,5],[[30,37],\"isPath\"],null],[28,[37,7],[[30,38],18],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[37,38]],null],[1,\"  \"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n\"],[42,[28,[37,4],[[28,[37,4],[[28,[37,5],[[30,0,[\"grid\"]],19],null]],null]],null],null,[[[1,\"      \"],[8,[39,6],null,[[\"@isWall\",\"@isVisited\",\"@isPath\",\"@arrPos\",\"@onChange\"],[[28,[37,5],[[30,39],\"isWall\"],null],[28,[37,5],[[30,39],\"isVisited\"],null],[28,[37,5],[[30,39],\"isPath\"],null],[28,[37,7],[[30,40],19],null],[30,0,[\"onChangeHandler\"]]]],null],[1,\"\\n\"]],[39,40]],null],[1,\"  \"],[13],[1,\"\\n\\n\"],[13]],[\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\",\"box\",\"index\"],false,[\"page-title\",\"pathfinding/navbar\",\"on\",\"each\",\"-track-array\",\"get\",\"pathfinding/box\",\"array\"]]",
     "moduleName": "algolizer/templates/pathfinding/index.hbs",
     "isStrictMode": false
   });
@@ -1407,7 +1421,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+40231365"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+c3dadd2a"});
           }
         
 //# sourceMappingURL=algolizer.map

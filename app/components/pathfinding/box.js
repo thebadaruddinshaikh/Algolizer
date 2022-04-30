@@ -8,6 +8,7 @@ export default class PathfindingBoxComponent extends Component {
 
   @tracked isWall = this.args.isWall;
   @tracked isVisited = this.args.isVisited;
+  @tracked isPath = this.args.isPath;
 
   get isSource() {
     return this.stateManager.isSource(this.args.arrPos);
@@ -20,6 +21,8 @@ export default class PathfindingBoxComponent extends Component {
   get getClasses() {
     if (this.isWall) {
       return 'wall';
+    } else if (this.isPath) {
+      return 'path';
     } else if (this.isVisited) {
       return 'visited';
     }
