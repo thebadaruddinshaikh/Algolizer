@@ -108,20 +108,21 @@ export default class PathfindingIndexController extends Controller {
   }
 
   async depthFirstSearch(stack, speed) {
+    //building the PrevNodeList
+    let prevNodeList = [];
+    for (let y = 0; y < 20; y++) {
+      let tempArr = [];
+      for (let x = 0; x < 40; x++) {
+        tempArr.push([-1, -1]);
+      }
+      prevNodeList[y] = tempArr;
+    }
+
     let dy = [-1, 0, 1, 0];
     let dx = [0, 1, 0, -1];
 
     while (stack.length) {
       let box = stack.pop();
-
-      if (this.grid[box[1]][box[0]].isVisited) {
-        continue;
-      }
-      this.updateWithRebuild(box[0], box[1], false, true);
-
-      if (this.stateManager.isDestination(box)) {
-        break;
-      }
 
       for (let i = 0; i < 4; i++) {
         let x = box[0] + dx[i];
@@ -136,11 +137,17 @@ export default class PathfindingIndexController extends Controller {
           continue;
         }
         //else put in queue
-        else {
+        if (!this.grid[y][x].isVisited) {
+          prevNodeList[y][x] = [...box];
           stack.push([x, y]);
+          this.updateWithRebuild(x, y, false, true, false);
+          await new Promise((r) => setTimeout(r, speed));
+        }
+        if (this.stateManager.isDestination([x, y])) {
+          await this.buildPath(prevNodeList, this.stateManager.destination);
+          return;
         }
       }
-      await new Promise((r) => setTimeout(r, speed));
     }
   }
 
