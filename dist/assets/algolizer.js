@@ -544,8 +544,9 @@
         }
 
         prevNodeList[y] = tempArr;
-      } //up, right, down, left
+      }
 
+      this.updateWithRebuild(queue[0][0], queue[0][1], false, true, false); //up, right, down, left
 
       let dy = [-1, 0, 1, 0];
       let dx = [0, 1, 0, -1];
