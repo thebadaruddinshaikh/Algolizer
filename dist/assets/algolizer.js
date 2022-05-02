@@ -151,8 +151,9 @@
         }
       } else if (!this.isSource && !this.isDestination) {
         this.isWall = !this.isWall;
+        this.isPath = false;
         this.isVisited = false;
-        this.args.onChange(this.args.arrPos, this.isWall, false);
+        this.args.onChange(this.args.arrPos, this.isWall, false, false);
       }
     }
 
@@ -1433,7 +1434,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+c3dadd2a"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+0fec4677"});
           }
         
 //# sourceMappingURL=algolizer.map

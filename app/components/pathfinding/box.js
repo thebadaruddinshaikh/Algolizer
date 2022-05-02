@@ -47,6 +47,7 @@ export default class PathfindingBoxComponent extends Component {
 
   interactionHandler() {
     if (this.stateManager.underProgramControl) return;
+
     if (this.stateManager.sourceMove || this.stateManager.destinationMove) {
       if (this.stateManager.sourceMove && !this.isWall) {
         this.stateManager.setSource(this.args.arrPos);
@@ -55,8 +56,9 @@ export default class PathfindingBoxComponent extends Component {
       }
     } else if (!this.isSource && !this.isDestination) {
       this.isWall = !this.isWall;
+      this.isPath = false;
       this.isVisited = false;
-      this.args.onChange(this.args.arrPos, this.isWall, false);
+      this.args.onChange(this.args.arrPos, this.isWall, false, false);
     }
   }
 }
