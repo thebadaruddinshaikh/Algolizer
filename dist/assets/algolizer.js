@@ -415,6 +415,22 @@
       });
     }
 
+    get prevNodeArray() {
+      let arr = [];
+
+      for (let y = 0; y < 20; y++) {
+        let tempArr = [];
+
+        for (let x = 0; x < 40; x++) {
+          tempArr.push([-1, -1]);
+        }
+
+        arr[y] = tempArr;
+      }
+
+      return arr;
+    }
+
     onUpdateHandler(pos, wall, visited) {
       this.updateWithoutRebuild(pos[0], pos[1], wall, visited);
     }
@@ -496,25 +512,16 @@
     }
 
     updateWithoutRebuild(x, y, isWall, isVisited, isPath) {
-      this.grid[y][x].isWall = isWall;
-      this.grid[y][x].isVisited = isVisited;
-      this.grid[y][x].isPath = isPath;
+      this.grid[y][x] = {
+        isWall: isWall,
+        isVisited: isVisited,
+        isPath: isPath
+      };
     }
 
     async depthFirstSearch(stack, speed) {
       //building the PrevNodeList
-      let prevNodeList = [];
-
-      for (let y = 0; y < 20; y++) {
-        let tempArr = [];
-
-        for (let x = 0; x < 40; x++) {
-          tempArr.push([-1, -1]);
-        }
-
-        prevNodeList[y] = tempArr;
-      }
-
+      let prevNodeList = this.prevNodeArray;
       let dy = [-1, 0, 1, 0];
       let dx = [0, 1, 0, -1];
 
@@ -550,18 +557,7 @@
 
     async breadthFirstSearch(queue, speed) {
       //building the PrevNodeList
-      let prevNodeList = [];
-
-      for (let y = 0; y < 20; y++) {
-        let tempArr = [];
-
-        for (let x = 0; x < 40; x++) {
-          tempArr.push([-1, -1]);
-        }
-
-        prevNodeList[y] = tempArr;
-      }
-
+      let prevNodeList = this.prevNodeArray;
       this.updateWithRebuild(queue[0][0], queue[0][1], false, true, false); //up, right, down, left
 
       let dy = [-1, 0, 1, 0];
