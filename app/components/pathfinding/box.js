@@ -39,10 +39,16 @@ export default class PathfindingBoxComponent extends Component {
   }
 
   @action
-  dragHandler() {
+  mouseEnterHandler() {
     if (this.stateManager.dragging) {
       this.interactionHandler();
     }
+  }
+
+  updateBoxState(isWall, isVisited, isPath) {
+    this.isWall = isWall;
+    this.isVisited = isVisited;
+    this.isPath = isPath;
   }
 
   interactionHandler() {
@@ -55,9 +61,7 @@ export default class PathfindingBoxComponent extends Component {
         this.stateManager.setDestination(this.args.arrPos);
       }
     } else if (!this.isSource && !this.isDestination) {
-      this.isWall = !this.isWall;
-      this.isPath = false;
-      this.isVisited = false;
+      this.updateBoxState(!this.isWall, false, false);
       this.args.onChange(this.args.arrPos, this.isWall, false, false);
     }
   }

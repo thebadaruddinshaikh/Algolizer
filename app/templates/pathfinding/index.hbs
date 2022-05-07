@@ -1,4 +1,4 @@
-{{page-title 'Algolizer | Pathfinding'}}
+{{page-title 'Pathfinding'}}
 
 <Pathfinding::Navbar
   @visualize={{this.visualize}}
@@ -29,6 +29,19 @@
   {{on 'mousedown' this.enableDragging}}
   {{on 'mouseup' this.disableDragging}}
 >
+  {{!-- {{#each this.grid as |row rowNum|}}
+    <div class='center-row-container'>
+      {{#each row as |box colNum|}}
+        <Pathfinding::Box
+          @isWall={{get box 'isWall'}}
+          @isVisited={{get box 'isVisited'}}
+          @isPath={{get box 'isPath'}}
+          @arrPos={{array colNum rowNum}}
+          @onChange={{this.onUpdateHandler}}
+        />
+      {{/each}}
+    </div>
+  {{/each}} --}}
   <div class='center-row-container'>
     {{#each (get this.grid 0) as |box index|}}
       <Pathfinding::Box
@@ -36,7 +49,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 0}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -47,7 +60,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 1}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -58,7 +71,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 2}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -69,7 +82,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 3}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -80,7 +93,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 4}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -91,7 +104,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 5}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -102,7 +115,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 6}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -113,7 +126,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 7}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -124,7 +137,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 8}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -135,7 +148,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 9}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -146,7 +159,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 10}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -157,7 +170,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 11}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -168,7 +181,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 12}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -179,7 +192,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 13}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -190,7 +203,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 14}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -201,7 +214,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 15}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -212,7 +225,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 16}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -223,7 +236,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 17}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -234,7 +247,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 18}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>
@@ -245,7 +258,7 @@
         @isVisited={{get box 'isVisited'}}
         @isPath={{get box 'isPath'}}
         @arrPos={{array index 19}}
-        @onChange={{this.onChangeHandler}}
+        @onChange={{this.onUpdateHandler}}
       />
     {{/each}}
   </div>

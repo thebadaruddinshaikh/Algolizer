@@ -17,7 +17,7 @@ export default class PathfindingIndexController extends Controller {
   };
 
   @action
-  onChangeHandler(pos, wall, visited) {
+  onUpdateHandler(pos, wall, visited) {
     this.updateWithoutRebuild(pos[0], pos[1], wall, visited);
   }
 

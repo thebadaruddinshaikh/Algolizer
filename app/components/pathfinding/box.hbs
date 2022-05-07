@@ -1,7 +1,7 @@
 <div
   class='box {{this.getClasses}}'
   {{on 'mousedown' this.mouseDownHandler}}
-  {{on 'mouseenter' this.dragHandler}}
+  {{on 'mouseenter' this.mouseEnterHandler}}
 >
   {{#if this.isSource}}
     <p class='source no-select'>></p>
