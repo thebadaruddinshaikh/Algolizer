@@ -30,6 +30,11 @@
   animation-fill-mode: forwards;
   animation-timing-function: linear;
 }
+.no-select {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
 
 @keyframes bounce {
   0% {
