@@ -114,11 +114,9 @@ export default class PathfindingIndexController extends Controller {
   }
 
   updateWithoutRebuild(x, y, isWall, isVisited, isPath) {
-    this.grid[y][x] = {
-      isWall: isWall,
-      isVisited: isVisited,
-      isPath: isPath,
-    };
+    this.grid[y][x].isWall = isWall;
+    this.grid[y][x].isVisited = isVisited;
+    this.grid[y][x].isPath = isPath;
   }
 
   async depthFirstSearch(stack, speed) {

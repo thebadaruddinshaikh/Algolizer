@@ -512,11 +512,9 @@
     }
 
     updateWithoutRebuild(x, y, isWall, isVisited, isPath) {
-      this.grid[y][x] = {
-        isWall: isWall,
-        isVisited: isVisited,
-        isPath: isPath
-      };
+      this.grid[y][x].isWall = isWall;
+      this.grid[y][x].isVisited = isVisited;
+      this.grid[y][x].isPath = isPath;
     }
 
     async depthFirstSearch(stack, speed) {
@@ -1434,7 +1432,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+98f4148e"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+25709cb4"});
           }
         
 //# sourceMappingURL=algolizer.map
