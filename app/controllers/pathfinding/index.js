@@ -6,7 +6,7 @@ import { inject as service } from '@ember/service';
 export default class PathfindingIndexController extends Controller {
   @service('path-finding-state-manager') stateManager;
 
-  @tracked grid = this.model;
+  @tracked grid;
   @tracked selectedAlgo = 'No Selection';
   @tracked selectedSpeed = 'Medium';
 

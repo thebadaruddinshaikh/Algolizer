@@ -25,7 +25,7 @@
 .link-to-button:hover {
   background-color: #383838;
   font-weight: 600;
-  width: 120px;
+  transform: scale(1.05);
 }
 
 .box {
@@ -106,15 +106,15 @@
 @keyframes touched {
   0% {
     transform: scale(0.3);
-    background-color: #1781f3;
-    border-color: #1781f3;
+    background-color: #effa1b;
+    border-color: #fffb02;
     border-radius: 100%;
   }
   50% {
     transform: scale(1.2);
     border-radius: 0px;
-    background-color: #b700ff;
-    border-color: #b700ff;
+    background-color: #2795f0;
+    border-color: #4187ef;
   }
   100% {
     background-color: cyan;

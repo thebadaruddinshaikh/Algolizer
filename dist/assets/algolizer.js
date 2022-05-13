@@ -615,9 +615,7 @@
     configurable: true,
     enumerable: true,
     writable: true,
-    initializer: function () {
-      return this.model;
-    }
+    initializer: null
   }), _descriptor3 = _applyDecoratedDescriptor(_class.prototype, "selectedAlgo", [_tracking.tracked], {
     configurable: true,
     enumerable: true,
@@ -1050,8 +1048,6 @@
     }
 
     model() {
-      console.log('In the model');
-
       for (let y = 0; y < 20; y++) {
         let tempArr = [];
 
@@ -1066,7 +1062,12 @@
         this.modelGrid[y] = tempArr;
       }
 
-      return [...this.modelGrid];
+      return this.modelGrid;
+    }
+
+    setupController(controller, model) {
+      super.setupController(controller, model);
+      this.controllerFor('pathfinding.index').set('grid', model);
     }
 
   }
@@ -1432,7 +1433,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+25709cb4"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+935b29ec"});
           }
         
 //# sourceMappingURL=algolizer.map
