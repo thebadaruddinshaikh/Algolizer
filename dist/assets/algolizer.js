@@ -444,6 +444,7 @@
     }
 
     async visualize() {
+      this.clearPath();
       this.stateManager.underProgramControl = true;
 
       if (this.selectedAlgo == 'DFS') {

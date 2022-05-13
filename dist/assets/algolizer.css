@@ -116,11 +116,11 @@
   50% {
     transform: scale(1.2);
     border-radius: 0px;
-    background-color: #2795f0;
-    border-color: #4187ef;
+    background-color: #11f6b1;
+    border-color: #11f6b1;
   }
   100% {
-    background-color: cyan;
+    background-color: #00fbff;
     border-color: #0acfcf;
   }
 }
