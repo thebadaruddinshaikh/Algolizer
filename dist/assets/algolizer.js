@@ -1433,7 +1433,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+935b29ec"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+a1610848"});
           }
         
 //# sourceMappingURL=algolizer.map
