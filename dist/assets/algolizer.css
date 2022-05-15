@@ -124,7 +124,7 @@
     border-color: #0acfcf;
   }
 }
-body {
+.pathfinding-parent {
   width: fit-content;
 }
 
