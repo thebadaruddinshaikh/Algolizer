@@ -124,8 +124,13 @@
     border-color: #0acfcf;
   }
 }
+body {
+  width: fit-content;
+}
+
 .grid-container {
   margin-top: 30px;
+  overflow: scroll;
 }
 
 .bar {
