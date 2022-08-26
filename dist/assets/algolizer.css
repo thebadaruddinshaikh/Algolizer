@@ -3,6 +3,7 @@
 }
 
 .center-container {
+  margin: 0px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -12,6 +13,17 @@
 .center-row-container {
   display: flex;
   justify-content: center;
+}
+
+.landing-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+#source-anchor {
+  padding: 30px 0px;
 }
 
 .link-to-button {

@@ -1317,8 +1317,8 @@
   _exports.default = void 0;
 
   var _default = (0, _templateFactory.createTemplateFactory)({
-    "id": "MIkJkURR",
-    "block": "[[[10,0],[14,0,\"center-container\"],[12],[1,\"\\n  \"],[10,\"h1\"],[12],[1,\"Algolizer\"],[13],[1,\"\\n  \"],[10,2],[12],[1,\"This Project is bulit with Ember.js to visualize different Algorithms\"],[13],[1,\"\\n  \"],[10,\"h3\"],[12],[1,\"What would you like to visualize today?\"],[13],[1,\"\\n  \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n    \"],[8,[39,0],[[24,0,\"link-to-button\"]],[[\"@route\"],[\"pathfinding.index\"]],[[\"default\"],[[[[1,\"\\n      Path Finding\\n    \"]],[]]]]],[1,\"\\n    \"],[8,[39,0],[[24,0,\"link-to-button\"]],[[\"@route\"],[\"sorting.index\"]],[[\"default\"],[[[[1,\"\\n      Sorting\\n    \"]],[]]]]],[1,\"\\n  \"],[13],[1,\"\\n\\n\"],[13]],[],false,[\"link-to\"]]",
+    "id": "NKAgMW5/",
+    "block": "[[[10,0],[14,0,\"landing-wrapper\"],[12],[1,\"\\n  \"],[10,0],[14,0,\"center-container\"],[12],[1,\"\\n    \"],[10,\"h1\"],[12],[1,\"Algolizer\"],[13],[1,\"\\n    \"],[10,2],[12],[1,\"This Project is bulit with Ember.js to visualize different Algorithms\"],[13],[1,\"\\n    \"],[10,\"h3\"],[12],[1,\"What would you like to visualize today?\"],[13],[1,\"\\n    \"],[10,0],[14,0,\"center-row-container\"],[12],[1,\"\\n      \"],[8,[39,0],[[24,0,\"link-to-button\"]],[[\"@route\"],[\"pathfinding.index\"]],[[\"default\"],[[[[1,\"\\n        Path Finding\\n      \"]],[]]]]],[1,\"\\n      \"],[8,[39,0],[[24,0,\"link-to-button\"]],[[\"@route\"],[\"sorting.index\"]],[[\"default\"],[[[[1,\"\\n        Sorting\\n      \"]],[]]]]],[1,\"\\n    \"],[13],[1,\"\\n  \"],[13],[1,\"\\n\\n  \"],[10,0],[14,0,\"center-container\"],[12],[1,\"\\n    \"],[10,3],[14,1,\"source-anchor\"],[14,\"target\",\"_blank\"],[14,6,\"https://github.com/thebadaruddinshaikh/Algolizer\"],[12],[1,\" Source \"],[13],[1,\"\\n  \"],[13],[1,\"\\n\\n\"],[13]],[],false,[\"link-to\"]]",
     "moduleName": "algolizer/templates/index.hbs",
     "isStrictMode": false
   });
@@ -1434,7 +1434,7 @@ catch(err) {
 
 ;
           if (!runningTests) {
-            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+260367d7"});
+            require("algolizer/app")["default"].create({"name":"algolizer","version":"0.0.0+a9fc6aa3"});
           }
         
 //# sourceMappingURL=algolizer.map
